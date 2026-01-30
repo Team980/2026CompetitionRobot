@@ -20,6 +20,8 @@ import frc.robot.generated.TunerConstants;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    public static class Motors {
+    }
     public static class Driving {
         public static final LinearVelocity kMaxSpeed = TunerConstants.kSpeedAt12Volts;
         public static final AngularVelocity kMaxRotationalRate = RotationsPerSecond.of(1);

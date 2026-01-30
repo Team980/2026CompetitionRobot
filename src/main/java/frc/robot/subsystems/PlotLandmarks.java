@@ -7,8 +7,8 @@ import frc.robot.Landmarks;
 
 public class PlotLandmarks extends SubsystemBase{
     private final Field2d m_field = new Field2d();
-
-    public void robotInit() {
+    
+    public void PlotLandmarks() {
         SmartDashboard.putData("Field", m_field);
 
         // Plot all landmarks as "objects" on the field
@@ -19,6 +19,8 @@ public class PlotLandmarks extends SubsystemBase{
         m_field.getObject("LeftBump").setPose(Landmarks.leftBumpPosition());
         m_field.getObject("RightTrench").setPose(Landmarks.rightTrenchPosition());
         m_field.getObject("LeftTrench").setPose(Landmarks.leftTrenchPosition());
+        m_field.getRobotPose(m_drive.getRobotPose());
+        // Discontinued
     }
-
+ 
 }
