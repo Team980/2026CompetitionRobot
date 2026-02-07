@@ -12,7 +12,7 @@ public class PlotLandmarks extends SubsystemBase{
         SmartDashboard.putData("Field", m_field);
 
         // Plot all landmarks as "objects" on the field
-        m_field.getObject("Hub").setPose(Landmarks.hubPosition("center"));
+        m_field.getObject("Hub").setPose(Landmarks.hubPosition());
         m_field.getObject("Tower").setPose(Landmarks.towerPosition());
         m_field.getObject("Outpost").setPose(Landmarks.outpostPosition());
         m_field.getObject("RightBump").setPose(Landmarks.rightBumpPosition());

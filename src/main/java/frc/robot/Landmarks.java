@@ -21,16 +21,16 @@ public class Landmarks {
     // Center of the hub
 
     // Check if this is used somewhere else, if not, delete
-    public static Translation2d hubPosition() {
+   /*  public static Translation2d hubPosition() {
         final Optional<Alliance> alliance = DriverStation.getAlliance();
         if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
             return new Translation2d(Inches.of(182.105), Inches.of(158.845));
         }
         return new Translation2d(Inches.of(469.115), Inches.of(158.845));
-    }
+    }*/
 
     // Rotation is towards your alliance
-    public static Pose2d hubPosition(String name) { // 
+    public static Pose2d hubPosition() { // 
         final Optional<Alliance> alliance = DriverStation.getAlliance();
         if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
             return new Pose2d(Inches.of(182.105), Inches.of(158.845), Rotation2d.fromDegrees(0));
