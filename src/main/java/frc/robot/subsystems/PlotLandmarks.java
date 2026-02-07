@@ -19,7 +19,6 @@ public class PlotLandmarks extends SubsystemBase{
         m_field.getObject("LeftBump").setPose(Landmarks.leftBumpPosition());
         m_field.getObject("RightTrench").setPose(Landmarks.rightTrenchPosition());
         m_field.getObject("LeftTrench").setPose(Landmarks.leftTrenchPosition());
-        m_field.getRobotPose(m_drive.getRobotPose());
         // Discontinued
     }
  
