@@ -12,6 +12,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.Driving;
 import frc.robot.Landmarks;
@@ -63,6 +64,10 @@ public class AimAndDriveCommand extends Command {
         System.out.println("Hub Position:" + hubPosition);
         System.out.println("Robot Position:" + robotPosition);
         System.out.println("Hub Direction In Operator Perspective:" + hubDirectionInOperatorPerspective);
+        SmartDashboard.putNumberArray("HubXY",new double[] {hubPosition.getX(), hubPosition.getY()});
+        SmartDashboard.putNumberArray("RobotXY",new double[] {robotPosition.getX(), robotPosition.getY()});
+        SmartDashboard.putNumberArray("DirectionCosSin",new double[] 
+        {hubDirectionInOperatorPerspective.getCos(), hubDirectionInOperatorPerspective.getSin()});
         return hubDirectionInOperatorPerspective;
     }
 
