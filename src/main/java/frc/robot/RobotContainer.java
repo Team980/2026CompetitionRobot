@@ -35,7 +35,6 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.PlotLandmarks;
-import frc.util.AllianceFlipUtil;
 import frc.util.SwerveTelemetry;
 
 /**
@@ -67,7 +66,29 @@ public class RobotContainer {
     private final SwerveTelemetry swerveTelemetry = new SwerveTelemetry(Driving.kMaxSpeed.in(MetersPerSecond));
     
     private final CommandXboxController driver = new CommandXboxController(0);
+    // private final AutoRoutines autoRoutines = new AutoRoutines(
+    //     swerve,
+    //     null,
+    //     null,
+    //     null,
+    //     null,
+    //     null,
+    //     null,
+    //     limelight
+    // );
 
+    
+    // private final SubsystemCommands subsystemCommands = new SubsystemCommands(
+    //     swerve,
+    //     null,
+    //     null,
+    //     null,
+    //     null,
+    //     null,
+    //     null,
+    //     () -> -driver.getLeftY(),
+    //     () -> -driver.getLeftX()
+    // );
     private final AutoRoutines autoRoutines = new AutoRoutines(
         swerve,
         intake,
@@ -79,8 +100,7 @@ public class RobotContainer {
         limelight
     );
 
-    public static PathConstraints constraints =
-      new PathConstraints(2.25, 2, Units.degreesToRadians(540), Units.degreesToRadians(720));
+    
     private final SubsystemCommands subsystemCommands = new SubsystemCommands(
         swerve,
         intake,
@@ -93,7 +113,8 @@ public class RobotContainer {
         () -> -driver.getLeftX()
     );
    
-    
+    public static PathConstraints constraints =
+      new PathConstraints(2.25, 2, Units.degreesToRadians(540), Units.degreesToRadians(720));
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         configureBindings();
@@ -102,8 +123,7 @@ public class RobotContainer {
         boolean isCompetition = true;
         autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
         (stream) -> isCompetition
-        ? stream.filter(auto -> auto.getName().startsWith("comp"))
-        : stream);
+        ? stream.filter(auto -> auto.getName().startsWith("comp")) : stream);
         SmartDashboard.putData("AutoChooser", autoChooser);
     }
 
@@ -143,15 +163,15 @@ public class RobotContainer {
         configureManualDriveBindings();
         limelight.setDefaultCommand(updateVisionCommand());
 
-        RobotModeTriggers.autonomous().or(RobotModeTriggers.teleop())
+        /*RobotModeTriggers.autonomous().or(RobotModeTriggers.teleop())
             .onTrue(intake.homingCommand())
             .onTrue(hanger.homingCommand());
 
-       /* driver.rightTrigger().whileTrue(subsystemCommands.aimAndShoot());
+        driver.rightTrigger().whileTrue(subsystemCommands.aimAndShoot());
         driver.rightBumper().whileTrue(subsystemCommands.shootManually());
         driver.leftTrigger().whileTrue(intake.intakeCommand());
         driver.leftBumper().onTrue(intake.runOnce(() -> intake.set(Intake.Position.STOWED)));*/
-        driver.rightTrigger().whileTrue(subsystemCommands.aimTest());
+        driver.rightTrigger().whileTrue(subsystemCommands.testAim());
 
        /* driver.povUp().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
         driver.povDown().onTrue(hanger.positionCommand(Hanger.Position.HUNG));*/

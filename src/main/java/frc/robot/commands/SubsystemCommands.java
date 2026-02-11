@@ -81,6 +81,12 @@ public final class SubsystemCommands {
         );
     }
 
+    public Command testAim()
+    {
+        final AimAndDriveCommand aimAndDriveCommand = new AimAndDriveCommand(swerve, forwardInput, leftInput);
+        return aimAndDriveCommand;
+    }
+
     public Command shootManually() {
         return shooter.dashboardSpinUpCommand()
             .andThen(feed())

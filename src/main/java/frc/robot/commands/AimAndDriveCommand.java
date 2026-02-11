@@ -60,6 +60,9 @@ public class AimAndDriveCommand extends Command {
         final Translation2d robotPosition = swerve.getState().Pose.getTranslation();
         final Rotation2d hubDirectionInBlueAlliancePerspective = hubPosition.minus(robotPosition).getAngle();
         final Rotation2d hubDirectionInOperatorPerspective = hubDirectionInBlueAlliancePerspective.rotateBy(swerve.getOperatorForwardDirection());
+        System.out.println("Hub Position:" + hubPosition);
+        System.out.println("Robot Position:" + robotPosition);
+        System.out.println("Hub Direction In Operator Perspective:" + hubDirectionInOperatorPerspective);
         return hubDirectionInOperatorPerspective;
     }
 
