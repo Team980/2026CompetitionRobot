@@ -46,7 +46,7 @@ import frc.util.SwerveTelemetry;
 public class RobotContainer {
     // For landmark visualizaton
     private final PlotLandmarks plotter = new PlotLandmarks();
-    private final SendableChooser<Command> autoChooser;
+    //private final SendableChooser<Command> autoChooser;
     // private final Swerve swerve = new Swerve();
     // private final Intake intake = new Intake();
     // private final Floor floor = new Floor();
@@ -120,12 +120,18 @@ public class RobotContainer {
         configureBindings();
         autoRoutines.configure();
         swerve.registerTelemetry(swerveTelemetry::telemeterize);
-        boolean isCompetition = true;
-        autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
-        (stream) -> isCompetition
-        ? stream.filter(auto -> auto.getName().startsWith("comp")) : stream);
-        SmartDashboard.putData("AutoChooser", autoChooser);
+        //boolean isCompetition = true;
+     //   autoChooser = AutoBuilder.buildAutoChooser();
+        // autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
+        // (stream) -> isCompetition
+        // ? stream.filter(auto -> auto.getName().startsWith("")) : stream);
+      //  SmartDashboard.putData("AutoChooser", autoChooser);
     }
+
+//     public Command getAutonomousCommand() {
+//         return autoChooser.getSelected();
+//    }
+
 
     public void registerNamedCommands() {
         NamedCommands.registerCommand("Hub", 
@@ -162,6 +168,7 @@ public class RobotContainer {
     private void configureBindings() {
         configureManualDriveBindings();
         limelight.setDefaultCommand(updateVisionCommand());
+        
 
         /*RobotModeTriggers.autonomous().or(RobotModeTriggers.teleop())
             .onTrue(intake.homingCommand())
@@ -192,10 +199,26 @@ public class RobotContainer {
         driver.leftBumper().onTrue(Commands.runOnce(() -> manualDriveCommand.seedFieldCentric()));
     }
 
+    // private Command updateVisionCommand() {
+    //     return limelight.run(() -> {
+    //         final Pose2d currentRobotPose = swerve.getState().Pose;
+    //         final Optional<Limelight.Measurement> measurement = limelight.getMeasurement(currentRobotPose);
+    //         measurement.ifPresent(m -> {
+    //             swerve.addVisionMeasurement(
+    //                 m.poseEstimate.pose, 
+    //                 m.poseEstimate.timestampSeconds,
+    //                 m.standardDeviations
+    //             );
+    //         });
+    //     })
+    //     .ignoringDisable(true);
+    // }
+
     private Command updateVisionCommand() {
         return limelight.run(() -> {
             final Pose2d currentRobotPose = swerve.getState().Pose;
             final Optional<Limelight.Measurement> measurement = limelight.getMeasurement(currentRobotPose);
+            //if(button.onTrue(System.out.println(measurement)))
             measurement.ifPresent(m -> {
                 swerve.addVisionMeasurement(
                     m.poseEstimate.pose, 

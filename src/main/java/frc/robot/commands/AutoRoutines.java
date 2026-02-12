@@ -67,10 +67,11 @@ public final class AutoRoutines {
 
     public void configure() {
         autoChooser.addRoutine("Outpost and Depot", this::outpostAndDepotRoutine);
-        SmartDashboard.putData("Auto Chooser", autoChooser);
-        RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
+        //autoChooser.addRoutine("AutoBallCenterRight", this::AutoBallCenterRight)
+       SmartDashboard.putData("Auto Chooser", autoChooser);
+       RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
     }
-
+    //TODO: Recreate autoroutine to remove auto rountine
     private AutoRoutine outpostAndDepotRoutine() {
         final AutoRoutine routine = autoFactory.newRoutine("Outpost and Depot");
         final AutoTrajectory startToOutpost = OutpostAndDepotTrajectory$0.asAutoTraj(routine);
