@@ -46,7 +46,7 @@ import frc.util.SwerveTelemetry;
 public class RobotContainer {
     // For landmark visualizaton
     private final PlotLandmarks plotter = new PlotLandmarks();
-    //private final SendableChooser<Command> autoChooser;
+    private final SendableChooser<Command> autoChooser;
     // private final Swerve swerve = new Swerve();
     // private final Intake intake = new Intake();
     // private final Floor floor = new Floor();
@@ -120,17 +120,17 @@ public class RobotContainer {
         configureBindings();
         autoRoutines.configure();
         swerve.registerTelemetry(swerveTelemetry::telemeterize);
-        //boolean isCompetition = true;
-     //   autoChooser = AutoBuilder.buildAutoChooser();
+        boolean isCompetition = true;
+       autoChooser = AutoBuilder.buildAutoChooser();
         // autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
         // (stream) -> isCompetition
         // ? stream.filter(auto -> auto.getName().startsWith("")) : stream);
       //  SmartDashboard.putData("AutoChooser", autoChooser);
     }
 
-//     public Command getAutonomousCommand() {
-//         return autoChooser.getSelected();
-//    }
+    public Command getAutonomousCommand() {
+        return autoChooser.getSelected();
+   }
 
 
     public void registerNamedCommands() {
@@ -213,19 +213,38 @@ public class RobotContainer {
     //     })
     //     .ignoringDisable(true);
     // }
-
+    boolean hasSeededPose = false;
     private Command updateVisionCommand() {
         return limelight.run(() -> {
             final Pose2d currentRobotPose = swerve.getState().Pose;
             final Optional<Limelight.Measurement> measurement = limelight.getMeasurement(currentRobotPose);
             //if(button.onTrue(System.out.println(measurement)))
+            // measurement.ifPresent(m -> {
+            //     swerve.addVisionMeasurement(
+            //         m.poseEstimate.pose, 
+            //         m.poseEstimate.timestampSeconds,
+            //         m.standardDeviations
+            //     );
+            System.out.println(measurement);
             measurement.ifPresent(m -> {
+                if (!hasSeededPose) {
+                    swerve.resetPose(m.poseEstimate.pose);
+                    hasSeededPose = true;
+                    System.out.println("SEEDED FIELD POSE");
+                }
+                System.out.println(m.poseEstimate.pose);
                 swerve.addVisionMeasurement(
                     m.poseEstimate.pose, 
                     m.poseEstimate.timestampSeconds,
                     m.standardDeviations
                 );
             });
+                
+            // });
+           // swerve.resetPose(new Pose2d(Units.inchesToMeters(50), Units.inchesToMeters(50), Rotation2d.fromDegrees(180)));
+            // measurement.ifPresent(m -> {
+            //     swerve.resetPose(m.poseEstimate.pose);
+            // });
         })
         .ignoringDisable(true);
     }

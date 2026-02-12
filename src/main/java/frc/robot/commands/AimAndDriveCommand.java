@@ -55,24 +55,29 @@ public class AimAndDriveCommand extends Command {
         final Rotation2d currentHeadingInOperatorPerspective = currentHeadingInBlueAlliancePerspective.rotateBy(swerve.getOperatorForwardDirection());
         return GeometryUtil.isNear(targetHeading, currentHeadingInOperatorPerspective, kAimTolerance);
     }
-
+    boolean ranPrint = false;
     private Rotation2d getDirectionToHub() {
         final Translation2d hubPosition = Landmarks.hubPosition().getTranslation();
         final Translation2d robotPosition = swerve.getState().Pose.getTranslation();
         final Rotation2d hubDirectionInBlueAlliancePerspective = hubPosition.minus(robotPosition).getAngle();
         final Rotation2d hubDirectionInOperatorPerspective = hubDirectionInBlueAlliancePerspective.rotateBy(swerve.getOperatorForwardDirection());
-        System.out.println("Hub Position:" + hubPosition);
-        System.out.println("Robot Position:" + robotPosition);
-        System.out.println("Hub Direction In Operator Perspective:" + hubDirectionInOperatorPerspective);
-        SmartDashboard.putNumberArray("HubXY",new double[] {hubPosition.getX(), hubPosition.getY()});
-        SmartDashboard.putNumberArray("RobotXY",new double[] {robotPosition.getX(), robotPosition.getY()});
-        SmartDashboard.putNumberArray("DirectionCosSin",new double[] 
-        {hubDirectionInOperatorPerspective.getCos(), hubDirectionInOperatorPerspective.getSin()});
+        // if(!ranPrint)
+        // {
+        //     System.out.println("Hub Position:" + hubPosition);
+        //     System.out.println("Robot Position:" + robotPosition);
+        //     System.out.println("Hub Direction In Operator Perspective:" + hubDirectionInOperatorPerspective);
+        //     SmartDashboard.putNumberArray("HubXY",new double[] {hubPosition.getX(), hubPosition.getY()});
+        //     SmartDashboard.putNumberArray("RobotXY",new double[] {robotPosition.getX(), robotPosition.getY()});
+        //     SmartDashboard.putNumberArray("DirectionCosSin",new double[] 
+        //     {hubDirectionInOperatorPerspective.getCos(), hubDirectionInOperatorPerspective.getSin()});
+        //     ranPrint = true;
+        // }
         return hubDirectionInOperatorPerspective;
     }
 
     @Override
     public void execute() {
+        ranPrint = false;
         final ManualDriveInput input = inputSmoother.getSmoothedInput();
         swerve.setControl(
             fieldCentricFacingAngleRequest

@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
     private final RobotContainer m_robotContainer;
-   // private Command autonomousCommand;
+    private Command autonomousCommand;
     
     /**
      * This function is run when the robot is first started up and should be used for any
@@ -50,14 +50,14 @@ public class Robot extends TimedRobot {
     }
 
     /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
-    // @Override
-    // public void autonomousInit() {
-    //     autonomousCommand = m_robotContainer.getAutonomousCommand();
+    @Override
+    public void autonomousInit() {
+        autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    //     // schedule the autonomous command (example)
-    //     if (autonomousCommand != null) {
-    //     CommandScheduler.getInstance().schedule(autonomousCommand);
-    //     }
-    //     // m_robotContainer.autoInit();
-    // }
+        // schedule the autonomous command (example)
+        if (autonomousCommand != null) {
+        CommandScheduler.getInstance().schedule(autonomousCommand);
+        }
+        // m_robotContainer.autoInit();
+    }
 }
