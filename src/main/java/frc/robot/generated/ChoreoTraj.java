@@ -24,10 +24,45 @@ public record ChoreoTraj(
     Pose2d initialPoseBlue,
     Pose2d endPoseBlue
 ) {
-    public static final ChoreoTraj OutpostAndDepotTrajectory = new ChoreoTraj(
+    public static final ChoreoTraj AutoBallCenterRight = new ChoreoTraj(
+	    "AutoBallCenterRight",
+	    OptionalInt.empty(),
+	    34.24016,
+	    new Pose2d(3.611, 0.611, Rotation2d.fromRadians(3.142)),
+	    new Pose2d(0.941, 3.564, Rotation2d.fromRadians(3.142))
+	);
+	public static final ChoreoTraj AutoBallCenterRight$0 = new ChoreoTraj(
+	    "AutoBallCenterRight",
+	    OptionalInt.of(0),
+	    1.2338,
+	    new Pose2d(3.611, 0.611, Rotation2d.fromRadians(3.142)),
+	    new Pose2d(6.351, 0.621, Rotation2d.fromRadians(3.142))
+	);
+	public static final ChoreoTraj AutoBallCenterRight$1 = new ChoreoTraj(
+	    "AutoBallCenterRight",
+	    OptionalInt.of(1),
+	    3.5238,
+	    new Pose2d(6.351, 0.621, Rotation2d.fromRadians(3.142)),
+	    new Pose2d(5.779, 0.621, Rotation2d.fromRadians(3.142))
+	);
+	public static final ChoreoTraj AutoBallCenterRight$2 = new ChoreoTraj(
+	    "AutoBallCenterRight",
+	    OptionalInt.of(2),
+	    25.64612,
+	    new Pose2d(5.779, 0.621, Rotation2d.fromRadians(3.142)),
+	    new Pose2d(2.083, 2.414, Rotation2d.fromRadians(0.234))
+	);
+	public static final ChoreoTraj AutoBallCenterRight$3 = new ChoreoTraj(
+	    "AutoBallCenterRight",
+	    OptionalInt.of(3),
+	    3.836440000000003,
+	    new Pose2d(2.083, 2.414, Rotation2d.fromRadians(0.234)),
+	    new Pose2d(0.941, 3.564, Rotation2d.fromRadians(3.142))
+	);
+	public static final ChoreoTraj OutpostAndDepotTrajectory = new ChoreoTraj(
 	    "OutpostAndDepotTrajectory",
 	    OptionalInt.empty(),
-	    11.3563,
+	    11.33729,
 	    new Pose2d(3.598, 0.64, Rotation2d.fromRadians(3.142)),
 	    new Pose2d(0.941, 3.564, Rotation2d.fromRadians(3.142))
 	);
@@ -41,23 +76,30 @@ public record ChoreoTraj(
 	public static final ChoreoTraj OutpostAndDepotTrajectory$1 = new ChoreoTraj(
 	    "OutpostAndDepotTrajectory",
 	    OptionalInt.of(1),
-	    3.40099,
+	    3.40097,
 	    new Pose2d(0.581, 0.669, Rotation2d.fromRadians(3.142)),
 	    new Pose2d(0.668, 5.964, Rotation2d.fromRadians(3.142))
 	);
 	public static final ChoreoTraj OutpostAndDepotTrajectory$2 = new ChoreoTraj(
 	    "OutpostAndDepotTrajectory",
 	    OptionalInt.of(2),
-	    2.5827799999999996,
+	    2.5637499999999998,
 	    new Pose2d(0.668, 5.964, Rotation2d.fromRadians(3.142)),
 	    new Pose2d(2.498, 4.035, Rotation2d.fromRadians(0))
 	);
 	public static final ChoreoTraj OutpostAndDepotTrajectory$3 = new ChoreoTraj(
 	    "OutpostAndDepotTrajectory",
 	    OptionalInt.of(3),
-	    3.555109999999999,
+	    3.5551499999999994,
 	    new Pose2d(2.498, 4.035, Rotation2d.fromRadians(0)),
 	    new Pose2d(0.941, 3.564, Rotation2d.fromRadians(3.142))
+	);
+	public static final ChoreoTraj Simple = new ChoreoTraj(
+	    "Simple",
+	    OptionalInt.empty(),
+	    5.14416,
+	    new Pose2d(2, 7.334, Rotation2d.fromRadians(0)),
+	    new Pose2d(2, 7.334, Rotation2d.fromRadians(3.142))
 	);
 
     /**
@@ -65,11 +107,17 @@ public record ChoreoTraj(
      * This allows for trajectory data to be looked up with strings during runtime.
      */
     public static final Map<String, ChoreoTraj> ALL_TRAJECTORIES = Map.ofEntries(
-    	Map.entry("OutpostAndDepotTrajectory", OutpostAndDepotTrajectory),
+    	Map.entry("AutoBallCenterRight", AutoBallCenterRight),
+		Map.entry("AutoBallCenterRight$0", AutoBallCenterRight$0),
+		Map.entry("AutoBallCenterRight$1", AutoBallCenterRight$1),
+		Map.entry("AutoBallCenterRight$2", AutoBallCenterRight$2),
+		Map.entry("AutoBallCenterRight$3", AutoBallCenterRight$3),
+		Map.entry("OutpostAndDepotTrajectory", OutpostAndDepotTrajectory),
 		Map.entry("OutpostAndDepotTrajectory$0", OutpostAndDepotTrajectory$0),
 		Map.entry("OutpostAndDepotTrajectory$1", OutpostAndDepotTrajectory$1),
 		Map.entry("OutpostAndDepotTrajectory$2", OutpostAndDepotTrajectory$2),
-		Map.entry("OutpostAndDepotTrajectory$3", OutpostAndDepotTrajectory$3)
+		Map.entry("OutpostAndDepotTrajectory$3", OutpostAndDepotTrajectory$3),
+		Map.entry("Simple", Simple)
     );
 
     /**
