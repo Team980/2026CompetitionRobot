@@ -16,6 +16,8 @@ import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
+// added this below
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -26,10 +28,12 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
-public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
+public class Swerve extends TunerSwerveDrivetrain implements Subsystem 
+{
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
@@ -64,16 +68,14 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
             throw new RuntimeException("Failed to load PathPlanner RobotConfig", e);
         } 
         AutoBuilder.configure( 
-            () -> getState().Pose, 
-            //Robot pose supplier 
-            pose -> resetPose(pose), 
-            // Method to reset odometry (will be called if your auto has a starting pose) 
+            () -> getState().Pose, //Robot pose supplier 
+            pose -> resetPose(pose), // Method to reset odometry (will be called if your auto has a starting pose) 
             () -> getChassisSpeeds(), // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE 
             (speeds, feedforwards) -> drive(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards 
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains 
             new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants 
             new PIDConstants(5.0, 0.0, 0.0)
-            ), // Rotation PID constants ),
+            ), // Rotation PID constants
             config, // The robot configuration 
             () -> { // Boolean supplier that controls when the path will be mirrored for the red alliance // This will flip the path being followed to the red side of the field. // THE ORIGIN WILL REMAIN ON THE BLUE SIDE 
                 var alliance = DriverStation.getAlliance(); 
@@ -162,8 +164,19 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
         );
     }
 
+    // Trying to get the position of field directly from limelight
+  //  private final SwerveDrivePoseEstimator m_poseEstimator;
+    
     @Override
-    public void periodic() {
+    public void periodic() 
+    {
+        // double yaw = getPigeon2().getYaw().getValueAsDouble();
+        // LimelightHelpers.SetRobotOrientation("limelight", yaw, 0.0, 0.0, 0.0, 0.0, 0.0);
+        // var mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+        // if (mt2.tagCount > 0) {
+        //     this.addVisionMeasurement(mt2.pose. mt2.timestampSeconds);
+        // }
+
         /*
          * Periodically try to apply the operator perspective.
          * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
@@ -185,6 +198,8 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
             });
         }
     }
+
+    
 
     /**
      * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
@@ -220,3 +235,4 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
         super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
     }
 }
+

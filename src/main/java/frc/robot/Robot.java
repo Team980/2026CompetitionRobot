@@ -58,6 +58,9 @@ public class Robot extends TimedRobot {
         if (autonomousCommand != null) {
         CommandScheduler.getInstance().schedule(autonomousCommand);
         }
-        // m_robotContainer.autoInit();
+       // m_robotContainer.autoInit();
     }
+
+    @Override
+    public void teleopPeriodic() {}
 }

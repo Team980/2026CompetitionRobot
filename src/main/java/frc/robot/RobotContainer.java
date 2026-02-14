@@ -61,7 +61,7 @@ public class RobotContainer {
     private final Shooter shooter = null;
     private final Hood hood = null;
     private final Hanger hanger = null;
-    private final Limelight limelight = new Limelight("limelight");
+    private final Limelight limelight = new Limelight("limelight-pdp");
 
     private final SwerveTelemetry swerveTelemetry = new SwerveTelemetry(Driving.kMaxSpeed.in(MetersPerSecond));
     
@@ -125,7 +125,8 @@ public class RobotContainer {
         // autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
         // (stream) -> isCompetition
         // ? stream.filter(auto -> auto.getName().startsWith("")) : stream);
-      //  SmartDashboard.putData("AutoChooser", autoChooser);
+        SmartDashboard.putData("AutoChooser", autoChooser);
+       // System.out.println(limelight);
     }
 
     public Command getAutonomousCommand() {
@@ -225,14 +226,14 @@ public class RobotContainer {
             //         m.poseEstimate.timestampSeconds,
             //         m.standardDeviations
             //     );
-            System.out.println(measurement);
+           // System.out.println(measurement);
             measurement.ifPresent(m -> {
                 if (!hasSeededPose) {
                     swerve.resetPose(m.poseEstimate.pose);
                     hasSeededPose = true;
-                    System.out.println("SEEDED FIELD POSE");
+                  //  System.out.println("SEEDED FIELD POSE");
                 }
-                System.out.println(m.poseEstimate.pose);
+                //System.out.println(m.poseEstimate.pose);
                 swerve.addVisionMeasurement(
                     m.poseEstimate.pose, 
                     m.poseEstimate.timestampSeconds,

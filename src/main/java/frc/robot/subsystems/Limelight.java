@@ -25,23 +25,18 @@ public class Limelight extends SubsystemBase {
         this.telemetryTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/" + name);
         this.posePublisher = telemetryTable.getStructTopic("Estimated Robot Pose", Pose2d.struct).publish();
     }
-    //TODO: Check null error in optionaal.empty
+    //TODO: Check null error in optional.empty
     public Optional<Measurement> getMeasurement(Pose2d currentRobotPose) {
         LimelightHelpers.SetRobotOrientation(name, currentRobotPose.getRotation().getDegrees(), 0, 0, 0, 0, 0);
 
         final PoseEstimate poseEstimate_MegaTag1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
         final PoseEstimate poseEstimate_MegaTag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
         //Unhandled exception: java.lang.NullPointerException: Cannot read field "tagCount" because "poseEstimate_MegaTag1" is null
-        if (
-            poseEstimate_MegaTag1 == null 
-                //|| poseEstimate_MegaTag2 == null
-                || poseEstimate_MegaTag1.tagCount == 0
-               // || poseEstimate_MegaTag2.tagCount == 0
+        if ( poseEstimate_MegaTag1 == null 
+            || poseEstimate_MegaTag2 == null
+            || poseEstimate_MegaTag1.tagCount == 0
+            || poseEstimate_MegaTag2.tagCount == 0
         ) {
-            System.out.println("MT1 null?:" + poseEstimate_MegaTag1 == null);
-            System.out.println("MT2 null?:" + poseEstimate_MegaTag2 == null);
-            System.out.println("MT1 count 0:" + (poseEstimate_MegaTag1.tagCount == 0));
-            System.out.println("MT2 Count 0:" + (poseEstimate_MegaTag2.tagCount == 0));
             return Optional.empty();
         }
 
