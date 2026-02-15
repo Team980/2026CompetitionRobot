@@ -126,6 +126,7 @@ public class RobotContainer {
         // (stream) -> isCompetition
         // ? stream.filter(auto -> auto.getName().startsWith("")) : stream);
         SmartDashboard.putData("AutoChooser", autoChooser);
+        swerve.resetPose(Pose2d.kZero);
        // System.out.println(limelight);
     }
 
@@ -239,6 +240,7 @@ public class RobotContainer {
                     m.poseEstimate.timestampSeconds,
                     m.standardDeviations
                 );
+                // swerve.resetRotation(m.poseEstimate.pose.getRotation());
             });
                 
             // });

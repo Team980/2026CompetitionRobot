@@ -97,9 +97,9 @@ public record ChoreoTraj(
 	public static final ChoreoTraj Simple = new ChoreoTraj(
 	    "Simple",
 	    OptionalInt.empty(),
-	    5.14416,
+	    11.28978,
 	    new Pose2d(2, 7.334, Rotation2d.fromRadians(0)),
-	    new Pose2d(2, 7.334, Rotation2d.fromRadians(3.142))
+	    new Pose2d(2, 7.336, Rotation2d.fromRadians(1.571))
 	);
 
     /**

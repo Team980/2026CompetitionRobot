@@ -8,12 +8,14 @@ import static frc.robot.generated.ChoreoTraj.OutpostAndDepotTrajectory$0;
 import static frc.robot.generated.ChoreoTraj.OutpostAndDepotTrajectory$1;
 import static frc.robot.generated.ChoreoTraj.OutpostAndDepotTrajectory$2;
 import static frc.robot.generated.ChoreoTraj.OutpostAndDepotTrajectory$3;
+import static frc.robot.generated.ChoreoTraj.Simple;
 
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.subsystems.Feeder;
@@ -66,18 +68,29 @@ public final class AutoRoutines {
     }
 
     public void configure() {
-       /* autoChooser.addRoutine("Outpost and Depot", this::outpostAndDepotRoutine);
-        //autoChooser.addRoutine("AutoBallCenterRight", this::AutoBallCenterRight)
-       SmartDashboard.putData("Auto Chooser", autoChooser);
-       RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());*/
+       // autoChooser.addRoutine("Outpost and Depot", this::outpostAndDepotRoutine);
+        // autoChooser.addRoutine("Simple", this::Simple);
+    //    SmartDashboard.putData("Auto Chooser", autoChooser);
+    //    RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
+    }
+
+    public Command getAutonomousCommand() {
+        return autoChooser.selectedCommand();
     }
     //TODO: Recreate autoroutine to remove auto rountine
+    private AutoRoutine Simple() {
+        final AutoRoutine routine = autoFactory.newRoutine("Simple");
+        final AutoTrajectory simpleTrajectory = Simple.asAutoTraj(routine);
+        return routine;
+    }
+
     private AutoRoutine outpostAndDepotRoutine() {
         final AutoRoutine routine = autoFactory.newRoutine("Outpost and Depot");
         final AutoTrajectory startToOutpost = OutpostAndDepotTrajectory$0.asAutoTraj(routine);
         final AutoTrajectory outpostToDepot = OutpostAndDepotTrajectory$1.asAutoTraj(routine);
         final AutoTrajectory depotToShootingPose = OutpostAndDepotTrajectory$2.asAutoTraj(routine);
         final AutoTrajectory shootingPoseToTower = OutpostAndDepotTrajectory$3.asAutoTraj(routine);
+        
 
         routine.active().onTrue(
             Commands.sequence(
