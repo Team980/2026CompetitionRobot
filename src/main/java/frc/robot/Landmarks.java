@@ -53,7 +53,8 @@ public class Landmarks {
     public static Pose2d outpostPosition() {
         final Optional<Alliance> alliance = DriverStation.getAlliance();
         if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
-            return new Pose2d(Inches.of(0.30), Inches.of(26.22), Rotation2d.fromDegrees(0));
+            //was 0.3
+            return new Pose2d(Inches.of(24.30), Inches.of(26.22), Rotation2d.fromDegrees(0));
         }
         return new Pose2d(Inches.of(650.92), Inches.of(291.47), Rotation2d.fromDegrees(180)); // The distance from the wall to the tower ma ybe incorrect because its from the game manual
     }

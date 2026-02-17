@@ -36,8 +36,8 @@
    "val":6.0
   },
   "gearing":{
-   "exp":"5.8909",
-   "val":5.8909
+   "exp":"5.143",
+   "val":5.143
   },
   "radius":{
    "exp":"2 in",
@@ -52,21 +52,21 @@
    "val":0.58
   },
   "cof":{
-   "exp":"1.5",
-   "val":1.5
+   "exp":"1.2",
+   "val":1.2
   },
   "bumper":{
    "front":{
-    "exp":"16.875 in",
-    "val":0.428625
+    "exp":"17.5 in",
+    "val":0.4445
    },
    "side":{
-    "exp":"17.25 in",
-    "val":0.43815
+    "exp":"17.5 in",
+    "val":0.4445
    },
    "back":{
-    "exp":"16.875 in",
-    "val":0.428625
+    "exp":"17.5 in",
+    "val":0.4445
    }
   },
   "differentialTrackWidth":{

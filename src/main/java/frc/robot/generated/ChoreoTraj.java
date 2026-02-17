@@ -94,12 +94,26 @@ public record ChoreoTraj(
 	    new Pose2d(2.498, 4.035, Rotation2d.fromRadians(0)),
 	    new Pose2d(0.941, 3.564, Rotation2d.fromRadians(3.142))
 	);
-	public static final ChoreoTraj Simple = new ChoreoTraj(
-	    "Simple",
+	public static final ChoreoTraj RightTriangle = new ChoreoTraj(
+	    "RightTriangle",
 	    OptionalInt.empty(),
-	    11.28978,
-	    new Pose2d(2, 7.334, Rotation2d.fromRadians(0)),
-	    new Pose2d(2, 7.336, Rotation2d.fromRadians(1.571))
+	    22.1668,
+	    new Pose2d(2, 7.334, Rotation2d.fromRadians(-1.571)),
+	    new Pose2d(2, 7.336, Rotation2d.fromRadians(2.256))
+	);
+	public static final ChoreoTraj OutpostTurn = new ChoreoTraj(
+	    "OutpostTurn",
+	    OptionalInt.empty(),
+	    6.61089,
+	    new Pose2d(3.56, 0.496, Rotation2d.fromRadians(3.142)),
+	    new Pose2d(1.728, 0.585, Rotation2d.fromRadians(0.785))
+	);
+	public static final ChoreoTraj LimelightOutpost = new ChoreoTraj(
+	    "LimelightOutpost",
+	    OptionalInt.empty(),
+	    3.42016,
+	    new Pose2d(3.56, 0.496, Rotation2d.fromRadians(3.142)),
+	    new Pose2d(1.748, 0.585, Rotation2d.fromRadians(3.142))
 	);
 
     /**
@@ -117,7 +131,9 @@ public record ChoreoTraj(
 		Map.entry("OutpostAndDepotTrajectory$1", OutpostAndDepotTrajectory$1),
 		Map.entry("OutpostAndDepotTrajectory$2", OutpostAndDepotTrajectory$2),
 		Map.entry("OutpostAndDepotTrajectory$3", OutpostAndDepotTrajectory$3),
-		Map.entry("Simple", Simple)
+		Map.entry("RightTriangle", RightTriangle),
+		Map.entry("OutpostTurn", OutpostTurn),
+		Map.entry("LimelightOutpost", LimelightOutpost)
     );
 
     /**

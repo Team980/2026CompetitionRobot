@@ -49,9 +49,13 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
 
     /** Swerve request to apply during field-centric path following */
     private final SwerveRequest.ApplyFieldSpeeds pathFieldSpeedsRequest = new SwerveRequest.ApplyFieldSpeeds();
+    private final SwerveRequest.ApplyRobotSpeeds robotSpeedsRequest = new SwerveRequest.ApplyRobotSpeeds();
     private final PIDController pathXController = new PIDController(10, 0, 0);
     private final PIDController pathYController = new PIDController(10, 0, 0);
     private final PIDController pathThetaController = new PIDController(7, 0, 0);
+    // private final PIDController pathXController = new PIDController(0, 0, 0);
+    // private final PIDController pathYController = new PIDController(0, 0, 0);
+    // private final PIDController pathThetaController = new PIDController(0, 0, 0);
     private static final double ROBOT_MASS_KG = Units.lbsToKilograms(115);
     private static final double ROBOT_MOI = 6;
     private static final double WHEEL_COF = 1.5;
@@ -105,7 +109,8 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
             (speeds, feedforwards) -> drive(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards 
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains 
             new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants 
-            new PIDConstants(5.0, 0.0, 0.0)
+            new PIDConstants(5.0, 0.0, 0.0)  /*new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants 
+            new PIDConstants(5.0, 0.0, 0.0)*/
             ), // Rotation PID constants
             PP_CONFIG, // The robot configuration 
             () -> { // Boolean supplier that controls when the path will be mirrored for the red alliance // This will flip the path being followed to the red side of the field. // THE ORIGIN WILL REMAIN ON THE BLUE SIDE 
@@ -117,7 +122,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
                 return false;
             },
             this);
-        pathThetaController.enableContinuousInput(-Math.PI, Math.PI);
+        //pathThetaController.enableContinuousInput(-Math.PI, Math.PI);
         // Reference to this subsystem to set requirements );
 
     }
@@ -125,11 +130,15 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
         return getState().Speeds; 
     } 
     private void drive(ChassisSpeeds speeds) {
-    setControl(
-        pathFieldSpeedsRequest
-            .withSpeeds(speeds)
-    );
-}
+        setControl(
+            robotSpeedsRequest
+                .withSpeeds(speeds)
+        );
+    }
+
+    
+
+    
 
     /**
      * Creates a new auto factory for this drivetrain.

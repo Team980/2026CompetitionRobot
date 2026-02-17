@@ -13,6 +13,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -54,7 +55,7 @@ public class RobotContainer {
     // private final Shooter shooter = new Shooter();
     // private final Hood hood = new Hood();
     // private final Hanger hanger = new Hanger();
-    private final Swerve swerve = new Swerve();
+    public final Swerve swerve = new Swerve();
     private final Intake intake = null;
     private final Floor floor = null;
     private final Feeder feeder = null;
@@ -112,9 +113,10 @@ public class RobotContainer {
         () -> -driver.getLeftY(),
         () -> -driver.getLeftX()
     );
-   
-    public static PathConstraints constraints =
-      new PathConstraints(2.25, 2, Units.degreesToRadians(540), Units.degreesToRadians(720));
+   public static PathConstraints constraints =
+  new PathConstraints(0.5, 0.5, 0.5, 0.5);
+   // public static PathConstraints constraints =
+    //  new PathConstraints(2.25, 2, Units.degreesToRadians(540), Units.degreesToRadians(720));
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         configureBindings();
@@ -141,6 +143,7 @@ public class RobotContainer {
          
         NamedCommands.registerCommand("Tower", 
         (AutoBuilder.pathfindToPose(Landmarks.towerPosition(), constraints,0)));
+
 
         NamedCommands.registerCommand("Outpost", 
         (AutoBuilder.pathfindToPose(Landmarks.outpostPosition(), constraints,0)));
@@ -229,12 +232,12 @@ public class RobotContainer {
             //     );
            // System.out.println(measurement);
             measurement.ifPresent(m -> {
-                if (!hasSeededPose) {
-                    swerve.resetPose(m.poseEstimate.pose);
-                    hasSeededPose = true;
-                  //  System.out.println("SEEDED FIELD POSE");
-                }
-                //System.out.println(m.poseEstimate.pose);
+                // if (!hasSeededPose) {
+                //     swerve.resetPose(m.poseEstimate.pose);
+                //     hasSeededPose = true;
+                //   //  System.out.println("SEEDED FIELD POSE");
+                // }
+                System.out.println(m.poseEstimate.pose);
                 swerve.addVisionMeasurement(
                     m.poseEstimate.pose, 
                     m.poseEstimate.timestampSeconds,

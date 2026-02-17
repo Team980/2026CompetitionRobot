@@ -8,7 +8,6 @@ import static frc.robot.generated.ChoreoTraj.OutpostAndDepotTrajectory$0;
 import static frc.robot.generated.ChoreoTraj.OutpostAndDepotTrajectory$1;
 import static frc.robot.generated.ChoreoTraj.OutpostAndDepotTrajectory$2;
 import static frc.robot.generated.ChoreoTraj.OutpostAndDepotTrajectory$3;
-import static frc.robot.generated.ChoreoTraj.Simple;
 
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
@@ -78,12 +77,6 @@ public final class AutoRoutines {
         return autoChooser.selectedCommand();
     }
     //TODO: Recreate autoroutine to remove auto rountine
-    private AutoRoutine Simple() {
-        final AutoRoutine routine = autoFactory.newRoutine("Simple");
-        final AutoTrajectory simpleTrajectory = Simple.asAutoTraj(routine);
-        return routine;
-    }
-
     private AutoRoutine outpostAndDepotRoutine() {
         final AutoRoutine routine = autoFactory.newRoutine("Outpost and Depot");
         final AutoTrajectory startToOutpost = OutpostAndDepotTrajectory$0.asAutoTraj(routine);
