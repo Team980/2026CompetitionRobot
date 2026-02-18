@@ -59,6 +59,13 @@ public record ChoreoTraj(
 	    new Pose2d(2.083, 2.414, Rotation2d.fromRadians(0.234)),
 	    new Pose2d(0.941, 3.564, Rotation2d.fromRadians(3.142))
 	);
+	public static final ChoreoTraj LimelightOutpost = new ChoreoTraj(
+	    "LimelightOutpost",
+	    OptionalInt.empty(),
+	    3.94789,
+	    new Pose2d(3.56, 0.496, Rotation2d.fromRadians(3.142)),
+	    new Pose2d(1.35, 0.496, Rotation2d.fromRadians(3.142))
+	);
 	public static final ChoreoTraj OutpostAndDepotTrajectory = new ChoreoTraj(
 	    "OutpostAndDepotTrajectory",
 	    OptionalInt.empty(),
@@ -94,6 +101,13 @@ public record ChoreoTraj(
 	    new Pose2d(2.498, 4.035, Rotation2d.fromRadians(0)),
 	    new Pose2d(0.941, 3.564, Rotation2d.fromRadians(3.142))
 	);
+	public static final ChoreoTraj OutpostTurn = new ChoreoTraj(
+	    "OutpostTurn",
+	    OptionalInt.empty(),
+	    3.18993,
+	    new Pose2d(1.142, 0.496, Rotation2d.fromRadians(3.142)),
+	    new Pose2d(1.463, 1.54, Rotation2d.fromRadians(0.785))
+	);
 	public static final ChoreoTraj RightTriangle = new ChoreoTraj(
 	    "RightTriangle",
 	    OptionalInt.empty(),
@@ -101,19 +115,12 @@ public record ChoreoTraj(
 	    new Pose2d(2, 7.334, Rotation2d.fromRadians(-1.571)),
 	    new Pose2d(2, 7.336, Rotation2d.fromRadians(2.256))
 	);
-	public static final ChoreoTraj OutpostTurn = new ChoreoTraj(
-	    "OutpostTurn",
+	public static final ChoreoTraj NewPath = new ChoreoTraj(
+	    "NewPath",
 	    OptionalInt.empty(),
-	    6.61089,
-	    new Pose2d(3.56, 0.496, Rotation2d.fromRadians(3.142)),
-	    new Pose2d(1.728, 0.585, Rotation2d.fromRadians(0.785))
-	);
-	public static final ChoreoTraj LimelightOutpost = new ChoreoTraj(
-	    "LimelightOutpost",
-	    OptionalInt.empty(),
-	    3.42016,
-	    new Pose2d(3.56, 0.496, Rotation2d.fromRadians(3.142)),
-	    new Pose2d(1.748, 0.585, Rotation2d.fromRadians(3.142))
+	    3.81886,
+	    new Pose2d(1.463, 1.54, Rotation2d.fromRadians(0.785)),
+	    new Pose2d(1.933, 3.467, Rotation2d.fromRadians(3.142))
 	);
 
     /**
@@ -126,14 +133,15 @@ public record ChoreoTraj(
 		Map.entry("AutoBallCenterRight$1", AutoBallCenterRight$1),
 		Map.entry("AutoBallCenterRight$2", AutoBallCenterRight$2),
 		Map.entry("AutoBallCenterRight$3", AutoBallCenterRight$3),
+		Map.entry("LimelightOutpost", LimelightOutpost),
 		Map.entry("OutpostAndDepotTrajectory", OutpostAndDepotTrajectory),
 		Map.entry("OutpostAndDepotTrajectory$0", OutpostAndDepotTrajectory$0),
 		Map.entry("OutpostAndDepotTrajectory$1", OutpostAndDepotTrajectory$1),
 		Map.entry("OutpostAndDepotTrajectory$2", OutpostAndDepotTrajectory$2),
 		Map.entry("OutpostAndDepotTrajectory$3", OutpostAndDepotTrajectory$3),
-		Map.entry("RightTriangle", RightTriangle),
 		Map.entry("OutpostTurn", OutpostTurn),
-		Map.entry("LimelightOutpost", LimelightOutpost)
+		Map.entry("RightTriangle", RightTriangle),
+		Map.entry("NewPath", NewPath)
     );
 
     /**

@@ -54,9 +54,9 @@ public class Landmarks {
         final Optional<Alliance> alliance = DriverStation.getAlliance();
         if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
             //was 0.3
-            return new Pose2d(Inches.of(24.30), Inches.of(26.22), Rotation2d.fromDegrees(0));
+            return new Pose2d(Inches.of(30.30), Inches.of(26.22), Rotation2d.fromDegrees(180));//0 degrees before
         }
-        return new Pose2d(Inches.of(650.92), Inches.of(291.47), Rotation2d.fromDegrees(180)); // The distance from the wall to the tower ma ybe incorrect because its from the game manual
+        return new Pose2d(Inches.of(650.92), Inches.of(291.47), Rotation2d.fromDegrees(0)); // 180 degrees before // The distance from the wall to the tower ma ybe incorrect because its from the game manual
     }
 
     // Left/right is based from the perspective of you looking from the alliance station

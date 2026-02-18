@@ -13,7 +13,19 @@
         {
           "type": "named",
           "data": {
-            "name": "Hub"
+            "name": "Outpost"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "OutpostTurn"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "NewPath"
           }
         }
       ]

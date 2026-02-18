@@ -40,6 +40,8 @@ import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
 public class Swerve extends TunerSwerveDrivetrain implements Subsystem 
 {
+    public static double currentTargetID;
+    private static double target = 26;
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
@@ -204,14 +206,20 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
                 .withWheelForceFeedforwardsY(sample.moduleForcesY())
         );
     }
-
+    public static boolean isTargeting() {
+        if (currentTargetID == target) {
+            return true;
+        }
+        return false;
+    }
     // Trying to get the position of field directly from limelight
   //  private final SwerveDrivePoseEstimator m_poseEstimator;
     
     @Override
     public void periodic() 
     {
-        // double yaw = getPigeon2().getYaw().getValueAsDouble();
+        // test tag
+        currentTargetID = LimelightHelpers.getFiducialID("limelight-pdp");
         // LimelightHelpers.SetRobotOrientation("limelight", yaw, 0.0, 0.0, 0.0, 0.0, 0.0);
         // var mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
         // if (mt2.tagCount > 0) {
@@ -238,6 +246,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+
     }
 
     

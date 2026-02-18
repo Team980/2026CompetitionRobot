@@ -122,8 +122,9 @@ public class RobotContainer {
         configureBindings();
         autoRoutines.configure();
         swerve.registerTelemetry(swerveTelemetry::telemeterize);
-        boolean isCompetition = true;
-       autoChooser = AutoBuilder.buildAutoChooser();
+       // boolean isCompetition = true;
+        registerNamedCommands();
+        autoChooser = AutoBuilder.buildAutoChooser();
         // autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
         // (stream) -> isCompetition
         // ? stream.filter(auto -> auto.getName().startsWith("")) : stream);
@@ -144,6 +145,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("Tower", 
         (AutoBuilder.pathfindToPose(Landmarks.towerPosition(), constraints,0)));
 
+        NamedCommands.registerCommand("FaceSingularTag", 
+        (AutoBuilder.pathfindToPose(Swerve.isTargeting() ? LimelightHelpers.getTargetPose3d_RobotSpace("limelight-pdp").toPose2d() : 
+        Landmarks.outpostPosition(), constraints, 0)));
 
         NamedCommands.registerCommand("Outpost", 
         (AutoBuilder.pathfindToPose(Landmarks.outpostPosition(), constraints,0)));
