@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LimelightOutpost"
+            "pathName": "StartToOutpost"
           }
         },
         {
@@ -19,13 +19,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "OutpostTurn"
+            "pathName": "OutpostToTower"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "ToTower"
+            "name": "Start"
           }
         }
       ]

@@ -45,6 +45,9 @@ import frc.util.SwerveTelemetry;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+    public static double restrictedSpeed = 0.4;
+    public static double unrestrictedSpeed = 0.8;
+    public static double speedFactor = unrestrictedSpeed;
     // For landmark visualizaton
     private final PlotLandmarks plotter = new PlotLandmarks();
     private final SendableChooser<Command> autoChooser;
@@ -67,6 +70,13 @@ public class RobotContainer {
     private final SwerveTelemetry swerveTelemetry = new SwerveTelemetry(Driving.kMaxSpeed.in(MetersPerSecond));
     
     private final CommandXboxController driver = new CommandXboxController(0);
+
+    public static void restrictSpeed() {
+        speedFactor = restrictedSpeed;
+    }
+    public static void unrestrictSpeed() {
+        speedFactor = unrestrictedSpeed;
+    }
     // private final AutoRoutines autoRoutines = new AutoRoutines(
     //     swerve,
     //     null,
@@ -110,8 +120,8 @@ public class RobotContainer {
         shooter,
         hood,
         hanger,
-        () -> -driver.getLeftY(),
-        () -> -driver.getLeftX()
+        () -> -driver.getLeftY()*speedFactor,
+        () -> -driver.getLeftX()*speedFactor // reduced the speed
     );
    public static PathConstraints constraints =
   new PathConstraints(0.5, 0.5, 0.5, 0.5);
@@ -139,6 +149,9 @@ public class RobotContainer {
 
 
     public void registerNamedCommands() {
+        NamedCommands.registerCommand("Start", 
+        (AutoBuilder.pathfindToPose(Landmarks.startPosition(), constraints,0)));
+
         NamedCommands.registerCommand("Hub", 
         (AutoBuilder.pathfindToPose(Landmarks.hubPosition(), constraints,0)));
          
@@ -196,9 +209,9 @@ public class RobotContainer {
     private void configureManualDriveBindings() {
         final ManualDriveCommand manualDriveCommand = new ManualDriveCommand(
             swerve, 
-            () -> -driver.getLeftY(), 
-            () -> -driver.getLeftX(), 
-            () -> -driver.getRightX()
+            () -> -driver.getLeftY()*speedFactor, 
+            () -> -driver.getLeftX()*speedFactor, 
+            () -> -driver.getRightX()*speedFactor
         );
         swerve.setDefaultCommand(manualDriveCommand);
         driver.a().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.k180deg)));
@@ -206,6 +219,9 @@ public class RobotContainer {
         driver.x().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.kCCW_90deg)));
         driver.y().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.kZero)));
         driver.leftBumper().onTrue(Commands.runOnce(() -> manualDriveCommand.seedFieldCentric()));
+        driver.rightBumper()
+            .onTrue(Commands.runOnce(() -> restrictSpeed()))
+            .onFalse(Commands.runOnce(() -> unrestrictSpeed()));
     }
 
     // private Command updateVisionCommand() {

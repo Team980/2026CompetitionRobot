@@ -30,6 +30,17 @@ public class Landmarks {
     }*/
 
     // Rotation is towards your alliance
+
+    public static Pose2d startPosition() { // 
+        Pose2d startPos = new Pose2d(Inches.of(182.105-44), Inches.of(20), Rotation2d.fromDegrees(180));
+        final Optional<Alliance> alliance = DriverStation.getAlliance();
+        if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
+            return startPos;
+        }
+        return startPos;
+    }
+
+
     public static Pose2d hubPosition() { // 
         final Optional<Alliance> alliance = DriverStation.getAlliance();
         if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
