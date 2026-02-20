@@ -194,7 +194,7 @@ public class RobotContainer {
     private void configureBindings() {
         configureManualDriveBindings();
        // if(isInTeleop)
-          //  limelight.setDefaultCommand(updateVisionCommand());
+           limelight.setDefaultCommand(updateVisionCommand());
        /*  else
         {
             limelight.setDefaultCommand(slowUpdateVisionCommand());

@@ -267,7 +267,9 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
      * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
      * while still accounting for measurement noise.
      * <p>
-     * Note that the vision measurement standard deviations passed into this method
+     * Note that the vision measurement 
+     * 
+     *  passed into this method
      * will continue to apply to future measurements until a subsequent call to
      * {@link #setVisionMeasurementStdDevs(Matrix)} or this method.
      *
