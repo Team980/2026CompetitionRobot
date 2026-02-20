@@ -15,6 +15,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -45,6 +46,8 @@ import frc.util.SwerveTelemetry;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+    public static boolean isInTeleop = false;
+    public static Pose2d lastPose;
     public static double restrictedSpeed = 0.4;
     public static double unrestrictedSpeed = 0.8;
     public static double speedFactor = unrestrictedSpeed;
@@ -140,6 +143,7 @@ public class RobotContainer {
         // ? stream.filter(auto -> auto.getName().startsWith("")) : stream);
         SmartDashboard.putData("AutoChooser", autoChooser);
         swerve.resetPose(Pose2d.kZero);
+        lastPose = swerve.getState().Pose;
        // System.out.println(limelight);
     }
 
@@ -189,7 +193,12 @@ public class RobotContainer {
      */
     private void configureBindings() {
         configureManualDriveBindings();
-        limelight.setDefaultCommand(updateVisionCommand());
+       // if(isInTeleop)
+          //  limelight.setDefaultCommand(updateVisionCommand());
+       /*  else
+        {
+            limelight.setDefaultCommand(slowUpdateVisionCommand());
+        }*/
         
 
         /*RobotModeTriggers.autonomous().or(RobotModeTriggers.teleop())
@@ -252,17 +261,64 @@ public class RobotContainer {
             //     );
            // System.out.println(measurement);
             measurement.ifPresent(m -> {
-                // if (!hasSeededPose) {
-                //     swerve.resetPose(m.poseEstimate.pose);
-                //     hasSeededPose = true;
-                //   //  System.out.println("SEEDED FIELD POSE");
-                // }
+                if (!hasSeededPose) {
+                    swerve.resetPose(m.poseEstimate.pose);
+                    hasSeededPose = true;
+                  //  System.out.println("SEEDED FIELD POSE");
+                }
                 System.out.println(m.poseEstimate.pose);
                 swerve.addVisionMeasurement(
                     m.poseEstimate.pose, 
                     m.poseEstimate.timestampSeconds,
                     m.standardDeviations
                 );
+                // swerve.resetRotation(m.poseEstimate.pose.getRotation());
+            });
+                
+            // });
+           // swerve.resetPose(new Pose2d(Units.inchesToMeters(50), Units.inchesToMeters(50), Rotation2d.fromDegrees(180)));
+            // measurement.ifPresent(m -> {
+            //     swerve.resetPose(m.poseEstimate.pose);
+            // });
+        })
+        .ignoringDisable(true);
+    }
+    private final float maxError = 0.1f;
+    
+    private Command slowUpdateVisionCommand() {
+        return limelight.run(() -> {
+            final Pose2d currentRobotPose = swerve.getState().Pose;
+            final Optional<Limelight.Measurement> measurement = limelight.getMeasurement(currentRobotPose);
+            //if(button.onTrue(System.out.println(measurement)))
+            // measurement.ifPresent(m -> {
+            //     swerve.addVisionMeasurement(
+            //         m.poseEstimate.pose, 
+            //         m.poseEstimate.timestampSeconds,
+            //         m.standardDeviations
+            //     );
+           // System.out.println(measurement);
+            measurement.ifPresent(m -> {
+                if (!hasSeededPose) {
+                    swerve.resetPose(m.poseEstimate.pose);
+                    hasSeededPose = true;
+                  //  System.out.println("SEEDED FIELD POSE");
+                }
+                //System.out.println(m.poseEstimate.pose);
+                
+                Translation2d distance = lastPose.getTranslation().minus(m.poseEstimate.pose.getTranslation());//- m.poseEstimate.pose.getTranslation().getX();
+                if(Math.abs(distance.getX()) > maxError || Math.abs(distance.getY()) > maxError)
+                {
+                    System.out.println("Running");
+                    System.out.println("m.poseEstimate.pose:" + m.poseEstimate.pose);
+                    System.out.println("lastPose:" + lastPose);
+                    System.out.println("Error:" + distance);
+                    swerve.addVisionMeasurement(
+                        m.poseEstimate.pose, 
+                        m.poseEstimate.timestampSeconds,
+                        m.standardDeviations
+                    );
+                    lastPose = m.poseEstimate.pose;
+                }
                 // swerve.resetRotation(m.poseEstimate.pose.getRotation());
             });
                 

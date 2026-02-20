@@ -6,9 +6,10 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.numbers.N2;
+import frc.robot.RobotContainer;
 
 public class DriveInputSmoother {
-    private static final double kJoystickDeadband = 0.15;
+    private static final double kJoystickDeadband = 0.15*RobotContainer.speedFactor;
     private static final double kCurveExponent = 1.5;
 
     private final DoubleSupplier forwardInput;

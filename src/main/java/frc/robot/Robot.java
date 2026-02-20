@@ -65,7 +65,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic()
     {
-        System.out.println(m_robotContainer.swerve.getState().Pose);
+        //System.out.println(m_robotContainer.swerve.getState().Pose);
     }
 
     @Override
