@@ -59,6 +59,13 @@ public record ChoreoTraj(
 	    new Pose2d(2.083, 2.414, Rotation2d.fromRadians(0.234)),
 	    new Pose2d(0.941, 3.564, Rotation2d.fromRadians(3.142))
 	);
+	public static final ChoreoTraj DiagonalTest = new ChoreoTraj(
+	    "DiagonalTest",
+	    OptionalInt.empty(),
+	    3.0402,
+	    new Pose2d(5.251, 7.505, Rotation2d.fromRadians(0)),
+	    new Pose2d(6.425, 6.229, Rotation2d.fromRadians(0))
+	);
 	public static final ChoreoTraj ForwardAndBack = new ChoreoTraj(
 	    "ForwardAndBack",
 	    OptionalInt.empty(),
@@ -118,9 +125,9 @@ public record ChoreoTraj(
 	public static final ChoreoTraj OutpostToTower = new ChoreoTraj(
 	    "OutpostToTower",
 	    OptionalInt.empty(),
-	    8.43805,
+	    8.43388,
 	    new Pose2d(0.77, 0.666, Rotation2d.fromRadians(3.142)),
-	    new Pose2d(1.868, 3.741, Rotation2d.fromRadians(3.142))
+	    new Pose2d(1.868, 3.741, Rotation2d.fromRadians(-0.814))
 	);
 	public static final ChoreoTraj OutpostTurn = new ChoreoTraj(
 	    "OutpostTurn",
@@ -132,9 +139,9 @@ public record ChoreoTraj(
 	public static final ChoreoTraj StartToOutpost = new ChoreoTraj(
 	    "StartToOutpost",
 	    OptionalInt.empty(),
-	    4.00082,
-	    new Pose2d(3.5, 0.5, Rotation2d.fromRadians(3.142)),
-	    new Pose2d(2, 0.5, Rotation2d.fromRadians(3.142))
+	    2.00042,
+	    new Pose2d(3.5, 0.7, Rotation2d.fromRadians(3.142)),
+	    new Pose2d(3, 0.7, Rotation2d.fromRadians(3.142))
 	);
 	public static final ChoreoTraj ToTower = new ChoreoTraj(
 	    "ToTower",
@@ -146,7 +153,7 @@ public record ChoreoTraj(
 	public static final ChoreoTraj TriangleFromHubLeft = new ChoreoTraj(
 	    "TriangleFromHubLeft",
 	    OptionalInt.empty(),
-	    27.06906,
+	    11.1789,
 	    new Pose2d(5.094, 7.621, Rotation2d.fromRadians(-1.571)),
 	    new Pose2d(5.094, 7.618, Rotation2d.fromRadians(-3.142))
 	);
@@ -161,6 +168,7 @@ public record ChoreoTraj(
 		Map.entry("AutoBallCenterRight$1", AutoBallCenterRight$1),
 		Map.entry("AutoBallCenterRight$2", AutoBallCenterRight$2),
 		Map.entry("AutoBallCenterRight$3", AutoBallCenterRight$3),
+		Map.entry("DiagonalTest", DiagonalTest),
 		Map.entry("ForwardAndBack", ForwardAndBack),
 		Map.entry("LimelightOutpost", LimelightOutpost),
 		Map.entry("LimelightOutpostBetter", LimelightOutpostBetter),

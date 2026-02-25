@@ -7,24 +7,30 @@ package frc.robot;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import java.util.Optional;
+import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Driving;
+import frc.robot.commands.AimAndDriveCommand;
 import frc.robot.commands.AutoRoutines;
 import frc.robot.commands.ManualDriveCommand;
 import frc.robot.commands.SubsystemCommands;
@@ -127,7 +133,7 @@ public class RobotContainer {
         () -> -driver.getLeftX()*speedFactor // reduced the speed
     );
    public static PathConstraints constraints =
-  new PathConstraints(0.5, 0.5, 0.5, 0.5);
+  new PathConstraints(0.85, 0.85, 0.85, 0.85);
    // public static PathConstraints constraints =
     //  new PathConstraints(2.25, 2, Units.degreesToRadians(540), Units.degreesToRadians(720));
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -180,6 +186,7 @@ public class RobotContainer {
         
         NamedCommands.registerCommand("LeftTrench", 
         (AutoBuilder.pathfindToPose(Landmarks.leftTrenchPosition(), constraints,0)));
+        
     }
     
     /**
@@ -194,7 +201,7 @@ public class RobotContainer {
     private void configureBindings() {
         configureManualDriveBindings();
        // if(isInTeleop)
-           limelight.setDefaultCommand(updateVisionCommand());
+            limelight.setDefaultCommand(updateVisionCommand());
        /*  else
         {
             limelight.setDefaultCommand(slowUpdateVisionCommand());
@@ -266,7 +273,7 @@ public class RobotContainer {
                     hasSeededPose = true;
                   //  System.out.println("SEEDED FIELD POSE");
                 }
-                System.out.println(m.poseEstimate.pose);
+                //System.out.println(m.poseEstimate.pose);
                 swerve.addVisionMeasurement(
                     m.poseEstimate.pose, 
                     m.poseEstimate.timestampSeconds,

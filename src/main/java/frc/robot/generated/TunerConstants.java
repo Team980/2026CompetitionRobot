@@ -336,14 +336,18 @@ public class TunerConstants {
 
     // The steer motor uses any SwerveModule.SteerRequestType control request with the
     // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
+    // private static final Slot0Configs steerGains = new Slot0Configs()
+        // .withKP(1).withKI(0).withKD(0.5)
+        // .withKS(0.1).withKV(1.59).withKA(0)
+        // .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
     private static final Slot0Configs steerGains = new Slot0Configs()
-        .withKP(100).withKI(0).withKD(0.5)
+        .withKP(7.0).withKI(0).withKD(0.05)
         .withKS(0.1).withKV(1.59).withKA(0)
         .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
     // When using closed-loop control, the drive motor uses the control
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
     private static final Slot0Configs driveGains = new Slot0Configs()
-        .withKP(0.1).withKI(0).withKD(0)
+        .withKP(0.1).withKI(0).withKD(0.0)
         .withKS(0).withKV(0.124);
 
     // The closed-loop output type to use for the steer motors;
@@ -369,14 +373,20 @@ public class TunerConstants {
     // Initial configs for the drive and steer motors and the azimuth encoder; these cannot be null.
     // Some configs will be overwritten; check the `with*InitialConfigs()` API documentation.
     private static final TalonFXConfiguration driveInitialConfigs = new TalonFXConfiguration()
+    .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
         .withCurrentLimits(
             new CurrentLimitsConfigs()
                 // Swerve azimuth does not require much torque output, so we can set a relatively low
                 // stator current limit to help avoid brownouts without impacting performance.
-                .withStatorCurrentLimit(Amps.of(120))
+                //PREVIOUSLY 120
+                .withStatorCurrentLimit(Amps.of(80))
                 .withStatorCurrentLimitEnable(true)
-        );
-    private static final TalonFXConfiguration steerInitialConfigs = new TalonFXConfiguration()
+                //added openloop for adjjstable speed up?
+        ).withOpenLoopRamps(new OpenLoopRampsConfigs().withVoltageOpenLoopRampPeriod(0.4));
+    
+    //driveInitialConfigs.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.4;
+    private static final TalonFXConfiguration steerInitialConfigs = new TalonFXConfiguration().
+    withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
      .withCurrentLimits(
         new CurrentLimitsConfigs()
             // Swerve azimuth does not require much torque output, so we can set a relatively low
@@ -422,6 +432,7 @@ public class TunerConstants {
             .withPigeon2Id(kPigeonId)
             .withPigeon2Configs(pigeonConfigs);
 
+    
     private static final SwerveModuleConstantsFactory<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> ConstantCreator =
         new SwerveModuleConstantsFactory<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>()
             .withDriveMotorGearRatio(kDriveGearRatio)
@@ -444,7 +455,6 @@ public class TunerConstants {
             .withDriveInertia(kDriveInertia)
             .withSteerFrictionVoltage(kSteerFrictionVoltage)
             .withDriveFrictionVoltage(kDriveFrictionVoltage);
-
 
     // Front Left
     private static final int kFrontLeftDriveMotorId = 41; //11

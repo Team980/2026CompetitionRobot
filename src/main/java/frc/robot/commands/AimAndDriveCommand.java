@@ -9,6 +9,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
@@ -26,6 +27,10 @@ public class AimAndDriveCommand extends Command {
 
     private final Swerve swerve;
     private final DriveInputSmoother inputSmoother;
+
+    private final SlewRateLimiter xLimiter = new SlewRateLimiter(3.0);
+    private final SlewRateLimiter yLimiter = new SlewRateLimiter(3.0);
+    private final SlewRateLimiter rotLimiter = new SlewRateLimiter(6.0);
 
     private final SwerveRequest.FieldCentricFacingAngle fieldCentricFacingAngleRequest = new SwerveRequest.FieldCentricFacingAngle()
         .withRotationalDeadband(Driving.kPIDRotationDeadband)
@@ -73,6 +78,11 @@ public class AimAndDriveCommand extends Command {
         //     ranPrint = true;
         // }
         return hubDirectionInOperatorPerspective;
+    }
+
+    public Rotation2d getTargetAngle()
+    {
+        return getDirectionToHub();
     }
 
     @Override

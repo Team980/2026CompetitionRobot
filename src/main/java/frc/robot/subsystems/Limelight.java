@@ -19,13 +19,17 @@ public class Limelight extends SubsystemBase {
     private final String name;
     private final NetworkTable telemetryTable;
     private final StructPublisher<Pose2d> posePublisher;
+    public static double linearStdDevBaseline = 0.1; // Meters
+    public static double angularStdDevBaseline = 0.08; // Radians
+    public static double angularStdDevMegatag2Factor =
+      Double.POSITIVE_INFINITY;
 
     public Limelight(String name) {
         this.name = name;
         this.telemetryTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/" + name);
         this.posePublisher = telemetryTable.getStructTopic("Estimated Robot Pose", Pose2d.struct).publish();
     }
-    //TODO: Check null error in optional.empty
+    
     public Optional<Measurement> getMeasurement(Pose2d currentRobotPose) {
         LimelightHelpers.SetRobotOrientation(name, currentRobotPose.getRotation().getDegrees(), 0, 0, 0, 0, 0);
 
@@ -47,7 +51,17 @@ public class Limelight extends SubsystemBase {
             poseEstimate_MegaTag2.pose.getTranslation(),
             poseEstimate_MegaTag1.pose.getRotation()
         );
-        final Matrix<N3, N1> standardDeviations = VecBuilder.fill(0.4, 0.4, 10.0);
+        //TODO: remind test 
+        
+        double stdDeviation = Math.pow(poseEstimate_MegaTag2.avgTagDist,2)/poseEstimate_MegaTag2.tagCount;
+        double linearStdDev = stdDeviation * linearStdDevBaseline;
+        double angularStdDev = stdDeviation * angularStdDevBaseline * angularStdDevMegatag2Factor;
+       // System.out.println(poseEstimate_MegaTag2.tagCount);
+        
+       //final Matrix<N3, N1> standardDeviations = VecBuilder.fill(0.4, 0.4, 10.0);
+        final Matrix<N3, N1> standardDeviations = VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev);
+        System.out.println("linear" + linearStdDev);
+        System.out.println("angular" + angularStdDev);
 
         posePublisher.set(poseEstimate_MegaTag2.pose);
 

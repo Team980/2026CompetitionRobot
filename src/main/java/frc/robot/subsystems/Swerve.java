@@ -5,6 +5,8 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.Utils; 
 import com.ctre.phoenix6.swerve.SwerveRequest; 
@@ -29,11 +31,14 @@ import edu.wpi.first.math.kinematics.Kinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.Landmarks;
 import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
@@ -55,12 +60,17 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
     private final PIDController pathXController = new PIDController(10, 0, 0);
     private final PIDController pathYController = new PIDController(10, 0, 0);
     private final PIDController pathThetaController = new PIDController(7, 0, 0);
+    private static double maxAccelaration = 1;
+    MotionMagicConfigs magicConfigs = new MotionMagicConfigs();
+    private final TrapezoidProfile trapezoidProfile = new TrapezoidProfile(
+        new TrapezoidProfile.Constraints(TunerConstants.kSpeedAt12Volts.baseUnitMagnitude(), maxAccelaration));
+    
     // private final PIDController pathXController = new PIDController(0, 0, 0);
     // private final PIDController pathYController = new PIDController(0, 0, 0);
     // private final PIDController pathThetaController = new PIDController(0, 0, 0);
     private static final double ROBOT_MASS_KG = Units.lbsToKilograms(115);
     private static final double ROBOT_MOI = 6;
-    private static final double WHEEL_COF = 1.5;
+    private static final double WHEEL_COF = 1.2;
     private static final RobotConfig PP_CONFIG =
       new RobotConfig(
           ROBOT_MASS_KG,
@@ -94,7 +104,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
             TunerConstants.BackLeft, 
             TunerConstants.BackRight
         );
-
+      //  driveMotor.getConfigurator().apply(config);
         // RobotConfig config;
         //  try{ 
         //     config = RobotConfig.fromGUISettings();
@@ -110,8 +120,8 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
             () -> getChassisSpeeds(), // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE 
             (speeds, feedforwards) -> drive(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards 
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains 
-            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants 
-            new PIDConstants(5.0, 0.0, 0.0)  /*new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants 
+            new PIDConstants(1, 0.0, 0.005), // Translation PID constants 
+            new PIDConstants(1, 0.0, 0.005)  /*new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants 
             new PIDConstants(5.0, 0.0, 0.0)*/
             ), // Rotation PID constants
             PP_CONFIG, // The robot configuration 
@@ -286,5 +296,14 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
     ) {
         super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
     }
+
+    public Rotation2d getAimDirection() {
+        Translation2d hubPosition = Landmarks.hubPosition().getTranslation();
+        Translation2d robotPosition = getState().Pose.getTranslation();
+        return hubPosition.minus(robotPosition).getAngle()
+                .rotateBy(getOperatorForwardDirection());
+    }
+
+    
 }
 

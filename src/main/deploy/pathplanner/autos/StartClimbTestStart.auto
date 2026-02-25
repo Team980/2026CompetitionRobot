@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "StartToOutpost"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "Outpost"
