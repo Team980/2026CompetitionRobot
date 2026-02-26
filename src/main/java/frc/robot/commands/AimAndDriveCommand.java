@@ -16,7 +16,8 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.Driving;
-import frc.robot.Landmarks;
+import frc.robot.Landmark;
+//import frc.robot.Landmarks;
 import frc.robot.subsystems.Swerve;
 import frc.util.DriveInputSmoother;
 import frc.util.GeometryUtil;
@@ -60,25 +61,23 @@ public class AimAndDriveCommand extends Command {
         final Rotation2d currentHeadingInOperatorPerspective = currentHeadingInBlueAlliancePerspective.rotateBy(swerve.getOperatorForwardDirection());
         return GeometryUtil.isNear(targetHeading, currentHeadingInOperatorPerspective, kAimTolerance);
     }
-    boolean ranPrint = false;
+   
     private Rotation2d getDirectionToHub() {
-        final Translation2d hubPosition = Landmarks.hubPosition().getTranslation();
+        final Translation2d hubPosition = Landmark.HUB.get().getTranslation();
         final Translation2d robotPosition = swerve.getState().Pose.getTranslation();
         final Rotation2d hubDirectionInBlueAlliancePerspective = hubPosition.minus(robotPosition).getAngle();
         final Rotation2d hubDirectionInOperatorPerspective = hubDirectionInBlueAlliancePerspective.rotateBy(swerve.getOperatorForwardDirection());
-        // if(!ranPrint)
-        // {
-        //     System.out.println("Hub Position:" + hubPosition);
-        //     System.out.println("Robot Position:" + robotPosition);
-        //     System.out.println("Hub Direction In Operator Perspective:" + hubDirectionInOperatorPerspective);
-        //     SmartDashboard.putNumberArray("HubXY",new double[] {hubPosition.getX(), hubPosition.getY()});
-        //     SmartDashboard.putNumberArray("RobotXY",new double[] {robotPosition.getX(), robotPosition.getY()});
-        //     SmartDashboard.putNumberArray("DirectionCosSin",new double[] 
-        //     {hubDirectionInOperatorPerspective.getCos(), hubDirectionInOperatorPerspective.getSin()});
-        //     ranPrint = true;
-        // }
         return hubDirectionInOperatorPerspective;
     }
+
+    private Rotation2d getDirectionToTower() {
+        final Translation2d towerPos = Landmark.TOWER.get().getTranslation();
+        final Translation2d robotPosition = swerve.getState().Pose.getTranslation();
+        final Rotation2d hubDirectionInBlueAlliancePerspective = towerPos.minus(robotPosition).getAngle();
+        final Rotation2d hubDirectionInOperatorPerspective = hubDirectionInBlueAlliancePerspective.rotateBy(swerve.getOperatorForwardDirection());
+        return hubDirectionInOperatorPerspective;
+    }
+
 
     public Rotation2d getTargetAngle()
     {
@@ -87,7 +86,6 @@ public class AimAndDriveCommand extends Command {
 
     @Override
     public void execute() {
-        ranPrint = false;
         final ManualDriveInput input = inputSmoother.getSmoothedInput();
         swerve.setControl(
             fieldCentricFacingAngleRequest

@@ -13,7 +13,8 @@ import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Landmarks;
+import frc.robot.Landmark;
+//import frc.robot.Landmarks;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Shooter;
 
@@ -54,7 +55,7 @@ public class PrepareShotCommand extends Command {
 
     private Distance getDistanceToHub() {
         final Translation2d robotPosition = robotPoseSupplier.get().getTranslation();
-        final Translation2d hubPosition = Landmarks.hubPosition().getTranslation();
+        final Translation2d hubPosition = Landmark.HUB.get().getTranslation();
         return Meters.of(robotPosition.getDistance(hubPosition));
     }
 

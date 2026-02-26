@@ -8,8 +8,11 @@ import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import frc.robot.generated.TunerConstants;
+
+import static edu.wpi.first.units.Units.Inches;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -30,5 +33,14 @@ public final class Constants {
 
     public static class KrakenX60 {
         public static final AngularVelocity kFreeSpeed = RPM.of(6000);
+    }
+
+    public static class FieldConstants {
+        public static final Distance FIELD_WIDTH = Inches.of(651.22);
+        public static final Distance FIELD_HEIGHT = Inches.of(317.69);
+    }
+
+    public static class RobotDimensions {
+        public static final Distance BUMPER_WIDTH = Inches.of(35);
     }
 }

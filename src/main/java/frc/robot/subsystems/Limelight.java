@@ -60,8 +60,8 @@ public class Limelight extends SubsystemBase {
         
        //final Matrix<N3, N1> standardDeviations = VecBuilder.fill(0.4, 0.4, 10.0);
         final Matrix<N3, N1> standardDeviations = VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev);
-        System.out.println("linear" + linearStdDev);
-        System.out.println("angular" + angularStdDev);
+      //  System.out.println("angular" + angularStdDev);
+      //  System.out.println("linear" + linearStdDev);
 
         posePublisher.set(poseEstimate_MegaTag2.pose);
 

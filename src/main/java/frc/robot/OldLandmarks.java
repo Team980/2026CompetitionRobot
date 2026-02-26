@@ -7,6 +7,7 @@ import java.util.Optional;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
@@ -17,7 +18,13 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
  * In here, all the landmarks' rotations are set to face the opposite alliance
  */
 
-public class Landmarks {
+public class OldLandmarks {
+    public Distance fieldWidth = Inches.of(651.22);
+    public Distance fieldHeight = Inches.of(317.69);
+
+    //public static Pose2d getPose() {
+
+   // }
     // Center of the hub
 
     // Check if this is used somewhere else, if not, delete
@@ -54,9 +61,11 @@ public class Landmarks {
     public static Pose2d towerPosition() {
         final Optional<Alliance> alliance = DriverStation.getAlliance();
         if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
-            return new Pose2d(Inches.of(601.65), Inches.of(253.22), Rotation2d.fromDegrees(0));
+            // was 49.57 for x before
+            return new Pose2d(Inches.of(68.57), Inches.of(147.47), Rotation2d.fromDegrees(180));
         }
-        return new Pose2d(Inches.of(49.57), Inches.of(147.47), Rotation2d.fromDegrees(180)); // The distance from the wall to the tower ma ybe incorrect because its from the game manual
+        return new Pose2d(Inches.of(601.65), Inches.of(253.22), Rotation2d.fromDegrees(0));
+         // The distance from the wall to the tower ma ybe incorrect because its from the game manual
     }
 
 
@@ -64,7 +73,7 @@ public class Landmarks {
     public static Pose2d outpostPosition() {
         final Optional<Alliance> alliance = DriverStation.getAlliance();
         if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
-            //was 0.3
+            //was 0.3 for x before
             return new Pose2d(Inches.of(32.30), Inches.of(26.22), Rotation2d.fromDegrees(180));//0 degrees before
         }
         return new Pose2d(Inches.of(650.92), Inches.of(291.47), Rotation2d.fromDegrees(0)); // 180 degrees before // The distance from the wall to the tower ma ybe incorrect because its from the game manual
@@ -105,6 +114,6 @@ public class Landmarks {
         }
         return new Pose2d(Inches.of(465.119), Inches.of(25.375), Rotation2d.fromDegrees(180)); 
     }
-}
-    
 
+
+}

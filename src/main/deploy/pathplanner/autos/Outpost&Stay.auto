@@ -7,7 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LimelightOutpost"
+            "pathName": "TrenchDriveForward"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
           }
         },
         {
@@ -17,15 +23,27 @@
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "OutpostTurn"
+            "waitTime": 3.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "ToTower"
+            "pathName": "OutpostCreateSpace"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AimToHub"
           }
         }
       ]

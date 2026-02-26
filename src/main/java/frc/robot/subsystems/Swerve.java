@@ -38,7 +38,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.Landmarks;
+import frc.robot.Landmark;
+//import frc.robot.Landmarks;
 import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
@@ -298,7 +299,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
     }
 
     public Rotation2d getAimDirection() {
-        Translation2d hubPosition = Landmarks.hubPosition().getTranslation();
+        Translation2d hubPosition = Landmark.HUB.get().getTranslation();
         Translation2d robotPosition = getState().Pose.getTranslation();
         return hubPosition.minus(robotPosition).getAngle()
                 .rotateBy(getOperatorForwardDirection());

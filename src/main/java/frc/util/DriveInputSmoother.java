@@ -9,7 +9,7 @@ import edu.wpi.first.math.numbers.N2;
 import frc.robot.RobotContainer;
 
 public class DriveInputSmoother {
-    private static final double kJoystickDeadband = 0.15*RobotContainer.speedFactor;
+    public static double joystickDeadband = 0.1*RobotContainer.speedFactor;
     private static final double kCurveExponent = 1.5;
 
     private final DoubleSupplier forwardInput;
@@ -28,11 +28,11 @@ public class DriveInputSmoother {
 
     public ManualDriveInput getSmoothedInput() { 
         final Vector<N2> rawTranslationInput = VecBuilder.fill(forwardInput.getAsDouble(), leftInput.getAsDouble());
-        final Vector<N2> deadbandedTranslationInput = MathUtil.applyDeadband(rawTranslationInput, kJoystickDeadband);
+        final Vector<N2> deadbandedTranslationInput = MathUtil.applyDeadband(rawTranslationInput, joystickDeadband);
         final Vector<N2> curvedTranslationInput = MathUtil.copyDirectionPow(deadbandedTranslationInput, kCurveExponent);
 
         final double rawRotationInput = rotationInput.getAsDouble();
-        final double deadbandedRotationInput = MathUtil.applyDeadband(rawRotationInput, kJoystickDeadband);
+        final double deadbandedRotationInput = MathUtil.applyDeadband(rawRotationInput, joystickDeadband);
         final double curvedRotationInput = MathUtil.copyDirectionPow(deadbandedRotationInput, kCurveExponent);
 
         return new ManualDriveInput(

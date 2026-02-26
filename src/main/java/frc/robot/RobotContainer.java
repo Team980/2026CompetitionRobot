@@ -5,6 +5,8 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Rotation;
+import static edu.wpi.first.units.Units.Inches;
 
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
@@ -17,6 +19,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -43,6 +46,7 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.PlotLandmarks;
+import frc.util.DriveInputSmoother;
 import frc.util.SwerveTelemetry;
 
 /**
@@ -82,9 +86,11 @@ public class RobotContainer {
 
     public static void restrictSpeed() {
         speedFactor = restrictedSpeed;
+        DriveInputSmoother.joystickDeadband = 0.1*speedFactor;
     }
     public static void unrestrictSpeed() {
         speedFactor = unrestrictedSpeed;
+        DriveInputSmoother.joystickDeadband = 0.1*speedFactor;
     }
     // private final AutoRoutines autoRoutines = new AutoRoutines(
     //     swerve,
@@ -159,34 +165,42 @@ public class RobotContainer {
 
 
     public void registerNamedCommands() {
-        NamedCommands.registerCommand("Start", 
-        (AutoBuilder.pathfindToPose(Landmarks.startPosition(), constraints,0)));
-
-        NamedCommands.registerCommand("Hub", 
-        (AutoBuilder.pathfindToPose(Landmarks.hubPosition(), constraints,0)));
-         
-        NamedCommands.registerCommand("Tower", 
-        (AutoBuilder.pathfindToPose(Landmarks.towerPosition(), constraints,0)));
-
+        // doesnt work
         NamedCommands.registerCommand("FaceSingularTag", 
         (AutoBuilder.pathfindToPose(Swerve.isTargeting() ? LimelightHelpers.getTargetPose3d_RobotSpace("limelight-pdp").toPose2d() : 
-        Landmarks.outpostPosition(), constraints, 0)));
+        Landmark.OUTPOST.get(), constraints, 0)));
+
+        // works
+        NamedCommands.registerCommand("Start", 
+        (AutoBuilder.pathfindToPose(Landmark.RIGHT_START.get(new Transform2d(Inches.of(0), Inches.of(0), Rotation2d.k180deg)), constraints,0)));
+
+        NamedCommands.registerCommand("Tower", 
+        (AutoBuilder.pathfindToPose(Landmark.TOWER.get(new Transform2d(Inches.of(Constants.RobotDimensions.BUMPER_WIDTH.in(Inches)*0.5 + 5 + 36), Inches.of(0), Rotation2d.k180deg)), constraints,0)));
 
         NamedCommands.registerCommand("Outpost", 
-        (AutoBuilder.pathfindToPose(Landmarks.outpostPosition(), constraints,0)));
+        (AutoBuilder.pathfindToPose(Landmark.OUTPOST.get(new Transform2d(Inches.of(Constants.RobotDimensions.BUMPER_WIDTH.in(Inches)*0.5 + 10), Inches.of(0), Rotation2d.k180deg)), constraints,0)));
+
+        NamedCommands.registerCommand("Depot", 
+        (AutoBuilder.pathfindToPose(Landmark.DEPOT.get(new Transform2d(Inches.of(0), Inches.of(0), Rotation2d.k180deg)), constraints,0)));
         
+        NamedCommands.registerCommand("Hub", 
+        (AutoBuilder.pathfindToPose(Landmark.HUB.get(new Transform2d(Inches.of(-24 - Constants.RobotDimensions.BUMPER_WIDTH.in(Inches)*0.5 - 2), Inches.of(0), Rotation2d.kZero)), constraints,0)));
+         
         NamedCommands.registerCommand("RightBump", 
-        (AutoBuilder.pathfindToPose(Landmarks.rightBumpPosition(), constraints,0)));
+        (AutoBuilder.pathfindToPose(Landmark.RIGHT_BUMP.get(new Transform2d(Inches.of(-24 - Constants.RobotDimensions.BUMPER_WIDTH.in(Inches)*0.5 - 2), Inches.of(0), Rotation2d.fromDegrees(0))), constraints,0)));
         
         NamedCommands.registerCommand("LeftBump", 
-        (AutoBuilder.pathfindToPose(Landmarks.leftBumpPosition(), constraints,0)));
+        (AutoBuilder.pathfindToPose(Landmark.LEFT_BUMP.get(new Transform2d(Inches.of(-24 - Constants.RobotDimensions.BUMPER_WIDTH.in(Inches)*0.5 - 2), Inches.of(0), Rotation2d.fromDegrees(0))), constraints,0)));
         
         NamedCommands.registerCommand("RightTrench", 
-        (AutoBuilder.pathfindToPose(Landmarks.rightTrenchPosition(), constraints,0)));
+        (AutoBuilder.pathfindToPose(Landmark.RIGHT_TRENCH.get(new Transform2d(Inches.of(-24 - Constants.RobotDimensions.BUMPER_WIDTH.in(Inches)*0.5 - 2), Inches.of(0), Rotation2d.fromDegrees(0))), constraints,0)));
         
         NamedCommands.registerCommand("LeftTrench", 
-        (AutoBuilder.pathfindToPose(Landmarks.leftTrenchPosition(), constraints,0)));
+        (AutoBuilder.pathfindToPose(Landmark.LEFT_TRENCH.get(new Transform2d(Inches.of(-24 - Constants.RobotDimensions.BUMPER_WIDTH.in(Inches)*0.5 - 2), Inches.of(0), Rotation2d.fromDegrees(0))), constraints,0)));
         
+        NamedCommands.registerCommand("AimToHub", 
+        (subsystemCommands.testAim())
+        );
     }
     
     /**
@@ -273,6 +287,8 @@ public class RobotContainer {
                     hasSeededPose = true;
                   //  System.out.println("SEEDED FIELD POSE");
                 }
+
+                System.out.println("rotation: " + m.poseEstimate.pose.getRotation());
                 //System.out.println(m.poseEstimate.pose);
                 swerve.addVisionMeasurement(
                     m.poseEstimate.pose, 
