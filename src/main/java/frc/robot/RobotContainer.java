@@ -44,6 +44,7 @@ import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.OneShooter;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.PlotLandmarks;
 import frc.util.DriveInputSmoother;
@@ -75,7 +76,8 @@ public class RobotContainer {
     private final Intake intake = null;
     private final Floor floor = null;
     private final Feeder feeder = null;
-    private final Shooter shooter = null;
+    //private final Shooter shooter = null;
+    private final OneShooter shooter = new OneShooter();
     private final Hood hood = null;
     private final Hanger hanger = null;
     private final Limelight limelight = new Limelight("limelight-pdp");
@@ -174,9 +176,10 @@ public class RobotContainer {
         NamedCommands.registerCommand("Start", 
         (AutoBuilder.pathfindToPose(Landmark.RIGHT_START.get(new Transform2d(Inches.of(0), Inches.of(0), Rotation2d.k180deg)), constraints,0)));
 
-        NamedCommands.registerCommand("Tower", 
-        (AutoBuilder.pathfindToPose(Landmark.TOWER.get(new Transform2d(Inches.of(Constants.RobotDimensions.BUMPER_WIDTH.in(Inches)*0.5 + 5 + 36), Inches.of(0), Rotation2d.k180deg)), constraints,0)));
-
+        // NamedCommands.registerCommand("Tower", 
+        // (AutoBuilder.pathfindToPosse(Landmark.TOWER.get(new Transform2d(Inches.of(Constants.RobotDimensions.BUMPER_WIDTH.in(Inches)*0.5 + 5 + 36), Inches.of(0), Rotation2d.k180deg)), constraints,0)));
+         NamedCommands.registerCommand("Tower", 
+         (AutoBuilder.pathfindToPose(OldLandmarks.towerPosition(), constraints, 0)));
         NamedCommands.registerCommand("Outpost", 
         (AutoBuilder.pathfindToPose(Landmark.OUTPOST.get(new Transform2d(Inches.of(Constants.RobotDimensions.BUMPER_WIDTH.in(Inches)*0.5 + 10), Inches.of(0), Rotation2d.k180deg)), constraints,0)));
 
@@ -201,6 +204,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("AimToHub", 
         (subsystemCommands.testAim())
         );
+
+        NamedCommands.registerCommand("Shoot", subsystemCommands.shootHalf());
+        NamedCommands.registerCommand("StopShooter", subsystemCommands.stopShooter());
     }
     
     /**
@@ -222,14 +228,18 @@ public class RobotContainer {
         }*/
         
 
-        /*RobotModeTriggers.autonomous().or(RobotModeTriggers.teleop())
-            .onTrue(intake.homingCommand())
-            .onTrue(hanger.homingCommand());
+        // RobotModeTriggers.autonomous().or(RobotModeTriggers.teleop())
+        //     .onTrue(intake.homingCommand())
+        //     .onTrue(hanger.homingCommand());
 
-        driver.rightTrigger().whileTrue(subsystemCommands.aimAndShoot());
-        driver.rightBumper().whileTrue(subsystemCommands.shootManually());
-        driver.leftTrigger().whileTrue(intake.intakeCommand());
-        driver.leftBumper().onTrue(intake.runOnce(() -> intake.set(Intake.Position.STOWED)));*/
+        //driver.rightTrigger().whileTrue(subsystemCommands.aimAndShoot());
+       //  driver.rightBumper().whileTrue(subsystemCommands.shootManually());
+        // driver.leftTrigger().whileTrue(intake.intakeCommand());
+        // driver.leftBumper().onTrue(intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
+        System.out.println("subsystemCommands:"  + subsystemCommands);
+
+        driver.povUp().whileTrue(subsystemCommands.shootHalf());
+        driver.povDown().whileTrue(subsystemCommands.stopShooter());
         driver.rightTrigger().whileTrue(subsystemCommands.testAim());
 
        /* driver.povUp().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
@@ -249,7 +259,7 @@ public class RobotContainer {
         driver.x().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.kCCW_90deg)));
         driver.y().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.kZero)));
         driver.leftBumper().onTrue(Commands.runOnce(() -> manualDriveCommand.seedFieldCentric()));
-        driver.rightBumper()
+        driver.leftTrigger()
             .onTrue(Commands.runOnce(() -> restrictSpeed()))
             .onFalse(Commands.runOnce(() -> unrestrictSpeed()));
     }
@@ -288,7 +298,7 @@ public class RobotContainer {
                   //  System.out.println("SEEDED FIELD POSE");
                 }
 
-                System.out.println("rotation: " + m.poseEstimate.pose.getRotation());
+              //  System.out.println("rotation: " + m.poseEstimate.pose.getRotation());
                 //System.out.println(m.poseEstimate.pose);
                 swerve.addVisionMeasurement(
                     m.poseEstimate.pose, 

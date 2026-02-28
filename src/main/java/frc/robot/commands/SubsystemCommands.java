@@ -11,6 +11,7 @@ import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.OneShooter;
 import frc.robot.subsystems.Swerve;
 
 public final class SubsystemCommands {
@@ -18,7 +19,7 @@ public final class SubsystemCommands {
     private final Intake intake;
     private final Floor floor;
     private final Feeder feeder;
-    private final Shooter shooter;
+    private final OneShooter shooter;
     private final Hood hood;
     private final Hanger hanger;
 
@@ -30,7 +31,7 @@ public final class SubsystemCommands {
         Intake intake,
         Floor floor,
         Feeder feeder,
-        Shooter shooter,
+        OneShooter shooter,
         Hood hood,
         Hanger hanger,
         DoubleSupplier forwardInput,
@@ -46,6 +47,7 @@ public final class SubsystemCommands {
 
         this.forwardInput = forwardInput;
         this.leftInput = leftInput;
+        System.out.println(shooter);
     }
 
     public SubsystemCommands(
@@ -53,7 +55,7 @@ public final class SubsystemCommands {
         Intake intake,
         Floor floor,
         Feeder feeder,
-        Shooter shooter,
+        OneShooter shooter,
         Hood hood,
         Hanger hanger
     ) {
@@ -101,6 +103,20 @@ public final class SubsystemCommands {
             .andThen(feed())
             .handleInterrupt(() -> shooter.stop());
     }
+
+    public Command shootHalf() {
+        System.out.println("IsPressed");
+        return shooter.testSpin(0.5);
+    }
+
+    public Command stopShooter()
+    {
+        System.out.println("Stopped");
+        return shooter.stopShootCommand();
+    }
+
+
+    
 
     private Command feed() {
         return Commands.sequence(

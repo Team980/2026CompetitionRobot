@@ -44,12 +44,6 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "DepotToTower"
-          }
-        },
-        {
           "type": "deadline",
           "data": {
             "commands": [
@@ -69,15 +63,40 @@
           }
         },
         {
-          "type": "wait",
+          "type": "deadline",
           "data": {
-            "waitTime": 3.0
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 2.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopShooter"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "TurnToTower"
+            "pathName": "DepotToTower"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
           }
         },
         {

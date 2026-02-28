@@ -17,6 +17,7 @@ import frc.robot.Landmark;
 //import frc.robot.Landmarks;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.OneShooter;
 
 public class PrepareShotCommand extends Command {
     private static final InterpolatingTreeMap<Distance, Shot> distanceToShotMap = new InterpolatingTreeMap<>(
@@ -38,19 +39,26 @@ public class PrepareShotCommand extends Command {
         distanceToShotMap.put(Inches.of(165.5), new Shot(3650, 0.48));
     }
 
-    private final Shooter shooter;
+    private final OneShooter shooter;
     private final Hood hood;
     private final Supplier<Pose2d> robotPoseSupplier;
 
-    public PrepareShotCommand(Shooter shooter, Hood hood, Supplier<Pose2d> robotPoseSupplier) {
+    public PrepareShotCommand(OneShooter shooter, Hood hood, Supplier<Pose2d> robotPoseSupplier) {
         this.shooter = shooter;
         this.hood = hood;
         this.robotPoseSupplier = robotPoseSupplier;
-        addRequirements(shooter, hood);
+
+        //TODO: Uncomment all hood code later when ready
+        //addRequirements(shooter, hood);
+        addRequirements(shooter);
     }
 
+    // public boolean isReadyToShoot() {
+    //     return shooter.isVelocityWithinTolerance() && hood.isPositionWithinTolerance();
+    // }
+
     public boolean isReadyToShoot() {
-        return shooter.isVelocityWithinTolerance() && hood.isPositionWithinTolerance();
+        return shooter.isVelocityWithinTolerance();
     }
 
     private Distance getDistanceToHub() {
@@ -63,8 +71,10 @@ public class PrepareShotCommand extends Command {
     public void execute() {
         final Distance distanceToHub = getDistanceToHub();
         final Shot shot = distanceToShotMap.get(distanceToHub);
-        shooter.setRPM(shot.shooterRPM);
-        hood.setPosition(shot.hoodPosition);
+        //shooter.setRPM(shot.shooterRPM);
+        shooter.setPercentOutput(0.5);
+        //hood.setPosition(shot.hoodPosition);
+
         SmartDashboard.putNumber("Distance to Hub (inches)", distanceToHub.in(Inches));
     }
 

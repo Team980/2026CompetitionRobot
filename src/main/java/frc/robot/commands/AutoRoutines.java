@@ -24,6 +24,7 @@ import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.OneShooter;
 import frc.robot.subsystems.Swerve;
 
 public final class AutoRoutines {
@@ -31,7 +32,8 @@ public final class AutoRoutines {
     private final Intake intake;
     private final Floor floor;
     private final Feeder feeder;
-    private final Shooter shooter;
+    //private final Shooter shooter;
+    private final OneShooter shooter;
     private final Hood hood;
     private final Hanger hanger;
     private final Limelight limelight;
@@ -46,7 +48,7 @@ public final class AutoRoutines {
         Intake intake,
         Floor floor,
         Feeder feeder,
-        Shooter shooter,
+        OneShooter shooter,
         Hood hood,
         Hanger hanger,
         Limelight limelight

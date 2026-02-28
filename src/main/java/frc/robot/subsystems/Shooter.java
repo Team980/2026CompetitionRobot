@@ -101,6 +101,11 @@ public class Shooter extends SubsystemBase {
         setPercentOutput(0.0);
     }
 
+    public void slowSpeed()
+    {
+        setPercentOutput(0.5);
+    }
+
     public Command spinUpCommand(double rpm) {
         return runOnce(() -> setRPM(rpm))
             .andThen(Commands.waitUntil(this::isVelocityWithinTolerance));
