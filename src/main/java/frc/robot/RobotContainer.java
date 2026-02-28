@@ -7,6 +7,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meter;
 
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
@@ -176,10 +177,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("Start", 
         (AutoBuilder.pathfindToPose(Landmark.RIGHT_START.get(new Transform2d(Inches.of(0), Inches.of(0), Rotation2d.k180deg)), constraints,0)));
 
-        // NamedCommands.registerCommand("Tower", 
-        // (AutoBuilder.pathfindToPosse(Landmark.TOWER.get(new Transform2d(Inches.of(Constants.RobotDimensions.BUMPER_WIDTH.in(Inches)*0.5 + 5 + 36), Inches.of(0), Rotation2d.k180deg)), constraints,0)));
-         NamedCommands.registerCommand("Tower", 
-         (AutoBuilder.pathfindToPose(OldLandmarks.towerPosition(), constraints, 0)));
+        NamedCommands.registerCommand("Tower", 
+        (AutoBuilder.pathfindToPose(Landmark.TOWER.get(new Transform2d(Inches.of(Constants.RobotDimensions.BUMPER_WIDTH.in(Inches)*0.5 + 5 + 36), Inches.of(0), Rotation2d.k180deg)), constraints,0)));
+
         NamedCommands.registerCommand("Outpost", 
         (AutoBuilder.pathfindToPose(Landmark.OUTPOST.get(new Transform2d(Inches.of(Constants.RobotDimensions.BUMPER_WIDTH.in(Inches)*0.5 + 10), Inches.of(0), Rotation2d.k180deg)), constraints,0)));
 
@@ -236,7 +236,7 @@ public class RobotContainer {
        //  driver.rightBumper().whileTrue(subsystemCommands.shootManually());
         // driver.leftTrigger().whileTrue(intake.intakeCommand());
         // driver.leftBumper().onTrue(intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
-        System.out.println("subsystemCommands:"  + subsystemCommands);
+       /// System.out.println("subsystemCommands:"  + subsystemCommands);
 
         driver.povUp().whileTrue(subsystemCommands.shootHalf());
         driver.povDown().whileTrue(subsystemCommands.stopShooter());
@@ -279,7 +279,9 @@ public class RobotContainer {
     //     .ignoringDisable(true);
     // }
     boolean hasSeededPose = false;
+    final double maxDistanceChange = 1;
     private Command updateVisionCommand() {
+       
         return limelight.run(() -> {
             final Pose2d currentRobotPose = swerve.getState().Pose;
             final Optional<Limelight.Measurement> measurement = limelight.getMeasurement(currentRobotPose);
@@ -291,20 +293,26 @@ public class RobotContainer {
             //         m.standardDeviations
             //     );
            // System.out.println(measurement);
+           
             measurement.ifPresent(m -> {
-                if (!hasSeededPose) {
+                
+                if (!hasSeededPose && InBoundsCheck(m.poseEstimate.pose)) {
                     swerve.resetPose(m.poseEstimate.pose);
+                    
                     hasSeededPose = true;
                   //  System.out.println("SEEDED FIELD POSE");
                 }
 
-              //  System.out.println("rotation: " + m.poseEstimate.pose.getRotation());
-                //System.out.println(m.poseEstimate.pose);
-                swerve.addVisionMeasurement(
-                    m.poseEstimate.pose, 
-                    m.poseEstimate.timestampSeconds,
-                    m.standardDeviations
-                );
+               double distance = m.poseEstimate.pose.getTranslation().getDistance(swerve.getState().Pose.getTranslation());
+
+                if (distance < maxDistanceChange && InBoundsCheck(m.poseEstimate.pose)) {
+                    swerve.addVisionMeasurement(
+                        m.poseEstimate.pose, 
+                        m.poseEstimate.timestampSeconds,
+                        m.standardDeviations
+                    );
+                }
+               // }
                 // swerve.resetRotation(m.poseEstimate.pose.getRotation());
             });
                 
@@ -315,6 +323,18 @@ public class RobotContainer {
             // });
         })
         .ignoringDisable(true);
+    }
+
+
+    public boolean InBoundsCheck(Pose2d visionPose)
+    {
+        double fieldLength = Constants.FieldConstants.FIELD_WIDTH.in(Meter); 
+        double fieldWidth = Constants.FieldConstants.FIELD_HEIGHT.in(Meter); 
+        if (visionPose.getX() < 0 || visionPose.getX() > fieldLength || visionPose.getY() < 0 || visionPose.getY() > fieldWidth) 
+        { 
+            return false;
+        }
+        return true;
     }
     private final float maxError = 0.1f;
     
@@ -338,20 +358,16 @@ public class RobotContainer {
                 }
                 //System.out.println(m.poseEstimate.pose);
                 
-                Translation2d distance = lastPose.getTranslation().minus(m.poseEstimate.pose.getTranslation());//- m.poseEstimate.pose.getTranslation().getX();
-                if(Math.abs(distance.getX()) > maxError || Math.abs(distance.getY()) > maxError)
-                {
-                    System.out.println("Running");
-                    System.out.println("m.poseEstimate.pose:" + m.poseEstimate.pose);
-                    System.out.println("lastPose:" + lastPose);
-                    System.out.println("Error:" + distance);
+                // Translation2d distance = lastPose.getTranslation().minus(m.poseEstimate.pose.getTranslation());//- m.poseEstimate.pose.getTranslation().getX();
+                // if(Math.abs(distance.getX()) > maxError || Math.abs(distance.getY()) > maxError)
+                // {
                     swerve.addVisionMeasurement(
                         m.poseEstimate.pose, 
                         m.poseEstimate.timestampSeconds,
                         m.standardDeviations
                     );
                     lastPose = m.poseEstimate.pose;
-                }
+                //}
                 // swerve.resetRotation(m.poseEstimate.pose.getRotation());
             });
                 
