@@ -9,6 +9,7 @@ import edu.wpi.first.math.numbers.N2;
 import frc.robot.RobotContainer;
 
 public class DriveInputSmoother {
+    //0.1
     public static double joystickDeadband = 0.1*RobotContainer.speedFactor;
     private static final double kCurveExponent = 1.5;
 

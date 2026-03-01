@@ -85,7 +85,7 @@ public class RobotContainer {
 
     private final SwerveTelemetry swerveTelemetry = new SwerveTelemetry(Driving.kMaxSpeed.in(MetersPerSecond));
     
-    private final CommandXboxController driver = new CommandXboxController(0);
+    public final CommandXboxController driver = new CommandXboxController(0);
 
     public static void restrictSpeed() {
         speedFactor = restrictedSpeed;
@@ -141,12 +141,14 @@ public class RobotContainer {
         () -> -driver.getLeftY()*speedFactor,
         () -> -driver.getLeftX()*speedFactor // reduced the speed
     );
+
    public static PathConstraints constraints =
   new PathConstraints(0.85, 0.85, 0.85, 0.85);
    // public static PathConstraints constraints =
     //  new PathConstraints(2.25, 2, Units.degreesToRadians(540), Units.degreesToRadians(720));
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
+
         configureBindings();
         autoRoutines.configure();
         swerve.registerTelemetry(swerveTelemetry::telemeterize);
@@ -298,7 +300,7 @@ public class RobotContainer {
                 
                 if (!hasSeededPose && InBoundsCheck(m.poseEstimate.pose)) {
                     swerve.resetPose(m.poseEstimate.pose);
-                    
+                   // swerve.seedFieldCentric(m.poseEstimate.pose.getRotation());
                     hasSeededPose = true;
                   //  System.out.println("SEEDED FIELD POSE");
                 }

@@ -121,7 +121,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
             () -> getChassisSpeeds(), // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE 
             (speeds, feedforwards) -> drive(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards 
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains 
-            new PIDConstants(1, 0.0, 0.000), // Translation PID constants 
+            new PIDConstants(1, 0.0, 0.00), // Translation PID constants 
             new PIDConstants(1, 0.0, 0.000)  /*new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants 
             new PIDConstants(5.0, 0.0, 0.0)*/
             ), // Rotation PID constants
@@ -135,7 +135,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
                 return false;
             },
             this);
-        //pathThetaController.enableContinuousInput(-Math.PI, Math.PI);
+        pathThetaController.enableContinuousInput(-Math.PI, Math.PI);
         // Reference to this subsystem to set requirements );
 
     }
@@ -218,10 +218,11 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
         );
     }
     public static boolean isTargeting() {
-        if (currentTargetID == target) {
-            return true;
-        }
-        return false;
+        // if (currentTargetID == target) {
+        //     return true;
+        // }
+        // return false;
+        return Math.abs(currentTargetID - target) < 1e-6;
     }
     // Trying to get the position of field directly from limelight
   //  private final SwerveDrivePoseEstimator m_poseEstimator;

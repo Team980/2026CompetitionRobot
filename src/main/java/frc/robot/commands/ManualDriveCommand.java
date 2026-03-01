@@ -18,6 +18,7 @@ import frc.robot.subsystems.Swerve;
 import frc.util.DriveInputSmoother;
 import frc.util.ManualDriveInput;
 import frc.util.Stopwatch;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 
 /**
  * Teleop manual drive command for the swerve drivetrain.
@@ -39,7 +40,14 @@ public class ManualDriveCommand extends Command {
     private final DriveInputSmoother inputSmoother;
     private final SwerveRequest.Idle idleRequest = new SwerveRequest.Idle();
 
-    
+    private final SlewRateLimiter xLimiter =
+    new SlewRateLimiter(2.);  // m/s per second
+
+    private final SlewRateLimiter yLimiter =
+        new SlewRateLimiter(2);
+
+    private final SlewRateLimiter rotLimiter =
+        new SlewRateLimiter(8);  // rad/s per second
 
     private final SwerveRequest.FieldCentric fieldCentricRequest = new SwerveRequest.FieldCentric()
         .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
@@ -117,28 +125,43 @@ public class ManualDriveCommand extends Command {
             currentState = State.IDLING;
         }
         previousInput = input;
+        double vx =
+    xLimiter.calculate(input.forward) *
+    Driving.kMaxSpeed.in(edu.wpi.first.units.Units.MetersPerSecond);
 
-        switch (currentState) {
-            case IDLING:
-                swerve.setControl(idleRequest);
-                break;
-            case DRIVING_WITH_MANUAL_ROTATION:
-                lockHeadingIfRotationStopped(input);
-                swerve.setControl(
-                    fieldCentricRequest
-                        .withVelocityX(Driving.kMaxSpeed.times(input.forward))
-                        .withVelocityY(Driving.kMaxSpeed.times(input.left))
-                        .withRotationalRate(Driving.kMaxRotationalRate.times(input.rotation))
-                );
-                break;
-            case DRIVING_WITH_LOCKED_HEADING:
-                swerve.setControl(
-                    fieldCentricFacingAngleRequest
-                        .withVelocityX(Driving.kMaxSpeed.times(input.forward))
-                        .withVelocityY(Driving.kMaxSpeed.times(input.left))
-                        .withTargetDirection(lockedHeading.get())
-                );
-                break;
+    double vy =
+        yLimiter.calculate(input.left) *
+        Driving.kMaxSpeed.in(edu.wpi.first.units.Units.MetersPerSecond);
+
+    double omega =
+        rotLimiter.calculate(input.rotation) *
+        Driving.kMaxRotationalRate.in(edu.wpi.first.units.Units.RadiansPerSecond);
+    switch (currentState) {
+        case IDLING:
+            swerve.setControl(idleRequest);
+            break;
+        case DRIVING_WITH_MANUAL_ROTATION:
+            lockHeadingIfRotationStopped(input);
+            swerve.setControl(
+                fieldCentricRequest
+                    // .withVelocityX(Driving.kMaxSpeed.times(input.forward))
+                    // .withVelocityY(Driving.kMaxSpeed.times(input.left))
+                    // .withRotationalRate(Driving.kMaxRotationalRate.times(input.rotation))
+                    .withVelocityX(vx)
+                    .withVelocityY(vy)
+                    .withRotationalRate(omega)
+            );
+            break;
+        case DRIVING_WITH_LOCKED_HEADING:
+            swerve.setControl(
+                fieldCentricFacingAngleRequest
+                    // .withVelocityX(Driving.kMaxSpeed.times(input.forward))
+                    // .withVelocityY(Driving.kMaxSpeed.times(input.left))
+                    .withVelocityX(vx)
+                    .withVelocityY(vy)
+                    .withTargetDirection(lockedHeading.get())
+            );
+            break;
         }
     }
 

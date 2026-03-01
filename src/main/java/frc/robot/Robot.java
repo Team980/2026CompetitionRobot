@@ -6,11 +6,15 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.generated.TunerConstants;;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -48,7 +52,26 @@ public class Robot extends TimedRobot {
         // block in order for anything in the Command-based framework to work.
         CommandScheduler.getInstance().run();
 
-         System.out.println(m_robotContainer.swerve.getState().Pose);
+        // System.out.println(m_robotContainer.swerve.getState().Pose);
+       // System.out.println(m_robotContainer.driver.getRawAxis());
+       var state = m_robotContainer.swerve.getState();
+
+        var flTarget = state.ModuleTargets[0];
+        var flActual = state.ModuleStates[0];
+
+        SmartDashboard.putNumber("FL Target Speed",
+            flTarget.speedMetersPerSecond);
+
+        SmartDashboard.putNumber("FL Actual Speed",
+            flActual.speedMetersPerSecond);
+        var constrainTargetAngle = ((flTarget.angle.getDegrees() + 180) % 360 + 360) % 360 - 180;
+        var constrainActualAngle = ((flActual.angle.getDegrees() + 180) % 360 + 360) % 360 - 180;
+        SmartDashboard.putNumber("FL Target Angle",
+            constrainTargetAngle);
+
+        SmartDashboard.putNumber("FL Actual Angle", constrainActualAngle);
+
+       //System.out.println(TunerConstants.FrontLeft.)
     }
 
     /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
@@ -72,4 +95,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {}
+
+    // @Override
+    // public void teleopInit() {
+    //     m_robotContainer.swerve.seedFieldCentric();
+    // }
 }
