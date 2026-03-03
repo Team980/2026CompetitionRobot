@@ -54,22 +54,24 @@ public class Robot extends TimedRobot {
 
         // System.out.println(m_robotContainer.swerve.getState().Pose);
        // System.out.println(m_robotContainer.driver.getRawAxis());
-       var state = m_robotContainer.swerve.getState();
+    //    var state = m_robotContainer.swerve.getState();
 
-        var flTarget = state.ModuleTargets[0];
-        var flActual = state.ModuleStates[0];
+    //     var flTarget = state.ModuleTargets[0];
+    //     var flActual = state.ModuleStates[0];
 
-        SmartDashboard.putNumber("FL Target Speed",
-            flTarget.speedMetersPerSecond);
+    //     SmartDashboard.putNumber("FL Target Speed",
+    //         flTarget.speedMetersPerSecond);
 
-        SmartDashboard.putNumber("FL Actual Speed",
-            flActual.speedMetersPerSecond);
-        var constrainTargetAngle = ((flTarget.angle.getDegrees() + 180) % 360 + 360) % 360 - 180;
-        var constrainActualAngle = ((flActual.angle.getDegrees() + 180) % 360 + 360) % 360 - 180;
-        SmartDashboard.putNumber("FL Target Angle",
-            constrainTargetAngle);
+    //     SmartDashboard.putNumber("FL Actual Speed",flActual.speedMetersPerSecond);
+    //     SmartDashboard.putNumber("FL Speed Error", flTarget.speedMetersPerSecond - flActual.speedMetersPerSecond);
+    //     var constrainTargetAngle = ((flTarget.angle.getDegrees() + 180) % 360 + 360) % 360 - 180;
+    //     var constrainActualAngle = ((flActual.angle.getDegrees() + 180) % 360 + 360) % 360 - 180;
+    //     SmartDashboard.putNumber("FL Target Angle",
+    //         constrainTargetAngle);
 
-        SmartDashboard.putNumber("FL Actual Angle", constrainActualAngle);
+    //     SmartDashboard.putNumber("FL Actual Angle", constrainActualAngle);
+
+    //     SmartDashboard.putNumber("FL Angle Error", MathUtil.angleModulus(constrainTargetAngle - constrainActualAngle));
 
        //System.out.println(TunerConstants.FrontLeft.)
     }

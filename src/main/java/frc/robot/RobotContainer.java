@@ -17,6 +17,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -162,6 +163,33 @@ public class RobotContainer {
         swerve.resetPose(Pose2d.kZero);
         lastPose = swerve.getState().Pose;
        // System.out.println(limelight);
+
+       swerve.registerTelemetry(state -> {
+
+            var flTarget = state.ModuleTargets[0];
+            var flActual = state.ModuleStates[0];
+
+            double targetAngle =
+                MathUtil.inputModulus(flTarget.angle.getDegrees(), -180, 180);
+            double actualAngle =
+                MathUtil.inputModulus(flActual.angle.getDegrees(), -180, 180);
+
+            SmartDashboard.putNumber("FL Target Speed",
+                flTarget.speedMetersPerSecond);
+            SmartDashboard.putNumber("FL Actual Speed",
+                flActual.speedMetersPerSecond);
+
+            SmartDashboard.putNumber("FL Target Angle",
+                targetAngle);
+            SmartDashboard.putNumber("FL Actual Angle",
+                actualAngle);
+
+            SmartDashboard.putNumber("FL Speed Error",
+                flTarget.speedMetersPerSecond - flActual.speedMetersPerSecond);
+
+            SmartDashboard.putNumber("FL Angle Error",
+                targetAngle - actualAngle);
+        });
     }
 
     public Command getAutonomousCommand() {
