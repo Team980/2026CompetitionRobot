@@ -2,10 +2,12 @@ package frc.robot;
 
 import com.ctre.phoenix6.CANBus;
 
+import frc.robot.generated.TunerConstants;
+
 public final class Ports {
     // CAN Buses
     public static final CANBus kRoboRioCANBus = new CANBus("rio");
-    public static final CANBus kCANivoreCANBus = new CANBus("main");
+    public static final CANBus kCANivoreCANBus = new CANBus("CANmeloAnthony");
 
     // Talon FX IDs
     public static final int kIntakePivot = 10;

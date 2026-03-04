@@ -62,7 +62,7 @@ public class RobotContainer {
     public static boolean isInTeleop = false;
     public static Pose2d lastPose;
     public static double restrictedSpeed = 0.4;
-    public static double unrestrictedSpeed = 0.8;
+    public static double unrestrictedSpeed = 0.6;
     public static double speedFactor = unrestrictedSpeed;
     // For landmark visualizaton
     private final PlotLandmarks plotter = new PlotLandmarks();

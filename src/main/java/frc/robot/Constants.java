@@ -42,5 +42,6 @@ public final class Constants {
 
     public static class RobotDimensions {
         public static final Distance BUMPER_WIDTH = Inches.of(35);
+        public static final Distance ROBOT_WIDTH = Inches.of(25.5);
     }
 }
