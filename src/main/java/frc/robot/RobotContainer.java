@@ -61,7 +61,7 @@ import frc.util.SwerveTelemetry;
 public class RobotContainer {
     public static boolean isInTeleop = false;
     public static Pose2d lastPose;
-    public static double restrictedSpeed = 0.4;
+    public static double restrictedSpeed = 0.4; //TODO: Remove Speed restriction
     public static double unrestrictedSpeed = 0.6;
     public static double speedFactor = unrestrictedSpeed;
     // For landmark visualizaton
@@ -199,9 +199,9 @@ public class RobotContainer {
 
     public void registerNamedCommands() {
         // doesnt work
-        NamedCommands.registerCommand("FaceSingularTag", 
-        (AutoBuilder.pathfindToPose(Swerve.isTargeting() ? LimelightHelpers.getTargetPose3d_RobotSpace("limelight-pdp").toPose2d() : 
-        Landmark.OUTPOST.get(), constraints, 0)));
+        // NamedCommands.registerCommand("FaceSingularTag", 
+        // (AutoBuilder.pathfindToPose(Swerve.isTargeting() ? LimelightHelpers.getTargetPose3d_RobotSpace("limelight-pdp").toPose2d() : 
+        // Landmark.OUTPOST.get(), constraints, 0)));
 
         // works
         NamedCommands.registerCommand("Start", 

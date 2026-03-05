@@ -47,7 +47,7 @@ import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 public class Swerve extends TunerSwerveDrivetrain implements Subsystem 
 {
     public static double currentTargetID;
-    private static double target = 26;
+    //private static double target = 26; used when we were testing limelight targeting 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
@@ -217,13 +217,13 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
                 .withWheelForceFeedforwardsY(sample.moduleForcesY())
         );
     }
-    public static boolean isTargeting() {
-        // if (currentTargetID == target) {
-        //     return true;
-        // }
-        // return false;
-        return Math.abs(currentTargetID - target) < 1e-6;
-    }
+    // public static boolean isTargeting() {
+    //     // if (currentTargetID == target) {
+    //     //     return true;
+    //     // }
+    //     // return false;
+    //     return Math.abs(currentTargetID - target) < 1e-6;
+    // }
     // Trying to get the position of field directly from limelight
   //  private final SwerveDrivePoseEstimator m_poseEstimator;
     

@@ -17,7 +17,7 @@ import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.PoseEstimate;
 
-//TODO check limelight settings ar ecorrect wiht team numebr etc.
+
 public class Limelight extends SubsystemBase {
     private final String name;
     private final NetworkTable telemetryTable;
