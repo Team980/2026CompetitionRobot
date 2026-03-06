@@ -43,5 +43,6 @@ public final class Constants {
     public static class RobotDimensions {
         public static final Distance BUMPER_WIDTH = Inches.of(35); // Bumpers add 3.5 each side so 25.5 + 7 = 32.5, but maybe add a little extra for the bumper mounts and such
         public static final Distance ROBOT_WIDTH = Inches.of(25.625);// Measured a second time looked like 25 and 5/8 inches but maybe negligible
+        public static final Distance ROBOT_HEIGHT = Inches.of(2); // TBA
     }
 }
