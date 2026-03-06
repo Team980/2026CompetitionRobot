@@ -12,6 +12,7 @@ import static edu.wpi.first.units.Units.Meter;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
@@ -34,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Driving;
 import frc.robot.commands.AimAndDriveCommand;
 import frc.robot.commands.AutoRoutines;
@@ -79,7 +81,7 @@ public class RobotContainer {
     private final Floor floor = null;
     private final Feeder feeder = null;
     //private final Shooter shooter = null;
-    private final OneShooter shooter = new OneShooter();
+    private final OneShooter shooter = null;
     private final Hood hood = null;
     private final Hanger hanger = null;
     private final Limelight limelight = new Limelight("limelight-pdp");
@@ -235,8 +237,8 @@ public class RobotContainer {
         (subsystemCommands.testAim())
         );
 
-        NamedCommands.registerCommand("Shoot", subsystemCommands.shootHalf());
-        NamedCommands.registerCommand("StopShooter", subsystemCommands.stopShooter());
+        // NamedCommands.registerCommand("Shoot", subsystemCommands.shootHalf());
+        // NamedCommands.registerCommand("StopShooter", subsystemCommands.stopShooter());
     }
     
     /**
@@ -264,13 +266,27 @@ public class RobotContainer {
 
         //driver.rightTrigger().whileTrue(subsystemCommands.aimAndShoot());
        //  driver.rightBumper().whileTrue(subsystemCommands.shootManually());
-        // driver.leftTrigger().whileTrue(intake.intakeCommand());
+        //  driver.leftTrigger().whileTrue(intake.intakeCommand());
         // driver.leftBumper().onTrue(intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
        /// System.out.println("subsystemCommands:"  + subsystemCommands);
+       
+        // driver.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
+        // driver.rightBumper().onTrue(Commands.runOnce(SignalLogger::stop));
 
-        driver.povUp().whileTrue(subsystemCommands.shootHalf());
-        driver.povDown().whileTrue(subsystemCommands.stopShooter());
-        driver.rightTrigger().whileTrue(subsystemCommands.testAim());
+        // /*
+        // * Joystick Y = quasistatic forward
+        // * Joystick A = quasistatic reverse
+        // * Joystick B = dynamic forward
+        // * Joystick X = dyanmic reverse
+        // */
+        // driver.y().whileTrue(swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        // driver.a().whileTrue(swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        // driver.b().whileTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        // driver.x().whileTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+        // driver.povUp().whileTrue(subsystemCommands.shootHalf());
+        // driver.povDown().whileTrue(subsystemCommands.stopShooter());
+        // driver.rightTrigger().whileTrue(subsystemCommands.testAim());
 
        /* driver.povUp().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
         driver.povDown().onTrue(hanger.positionCommand(Hanger.Position.HUNG));*/
@@ -289,9 +305,9 @@ public class RobotContainer {
         driver.x().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.kCCW_90deg)));
         driver.y().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.kZero)));
         driver.leftBumper().onTrue(Commands.runOnce(() -> manualDriveCommand.seedFieldCentric()));
-        driver.leftTrigger()
-            .onTrue(Commands.runOnce(() -> restrictSpeed()))
-            .onFalse(Commands.runOnce(() -> unrestrictSpeed()));
+        // driver.leftTrigger()
+        //     .onTrue(Commands.runOnce(() -> restrictSpeed()))
+        //     .onFalse(Commands.runOnce(() -> unrestrictSpeed()));
     }
 
     // private Command updateVisionCommand() {
