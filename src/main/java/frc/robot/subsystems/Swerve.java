@@ -164,7 +164,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
          (state) -> SignalLogger.writeString("state", state.toString())
       ),
       new SysIdRoutine.Mechanism(
-         (volts) -> getModule(0).getDriveMotor().setControl(m_voltReq.withOutput(volts.in(Volts))),
+         (volts) -> getModule(0).getSteerMotor().setControl(m_voltReq.withOutput(volts.in(Volts))),
          null,
          this
       )

@@ -302,12 +302,15 @@ public class RobotContainer {
         swerve.setDefaultCommand(manualDriveCommand);
         driver.a().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.k180deg)));
         driver.b().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.kCW_90deg)));
-        driver.x().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.kCCW_90deg)));
+        driver.x().onTrue(Commands.runOnce(()
+        
+        
+        -> manualDriveCommand.setLockedHeading(Rotation2d.kCCW_90deg)));
         driver.y().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.kZero)));
         driver.leftBumper().onTrue(Commands.runOnce(() -> manualDriveCommand.seedFieldCentric()));
-        // driver.leftTrigger()
-        //     .onTrue(Commands.runOnce(() -> restrictSpeed()))
-        //     .onFalse(Commands.runOnce(() -> unrestrictSpeed()));
+        driver.leftTrigger()
+            .onTrue(Commands.runOnce(() -> restrictSpeed()))
+            .onFalse(Commands.runOnce(() -> unrestrictSpeed()));
     }
 
     // private Command updateVisionCommand() {

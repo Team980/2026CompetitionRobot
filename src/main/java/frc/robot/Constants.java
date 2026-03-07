@@ -35,6 +35,11 @@ public final class Constants {
         public static final AngularVelocity kFreeSpeed = RPM.of(6000);
     }
 
+    public static class KrakenX44
+    {
+        public static final AngularVelocity kFreeSpeed = RPM.of(7500);
+    }
+
     public static class FieldConstants {
         public static final Distance FIELD_WIDTH = Inches.of(651.22);
         public static final Distance FIELD_HEIGHT = Inches.of(317.69);

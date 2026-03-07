@@ -4,11 +4,15 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -96,7 +100,14 @@ public class Robot extends TimedRobot {
     }
 
     @Override
-    public void teleopPeriodic() {}
+    public void teleopPeriodic() {
+        SignalLogger.writeValue("SwerveMotorVelocity",
+         RotationsPerSecond.of(m_robotContainer.swerve.getModule(0).getSteerMotor().getVelocity().getValueAsDouble()));
+         SignalLogger.writeValue("SwerveMotorPosition",
+         RotationsPerSecond.of(m_robotContainer.swerve.getModule(0).getSteerMotor().getPosition().getValueAsDouble()));
+          SignalLogger.writeValue("SwerveMotorVoltage",
+         Volts.of(m_robotContainer.swerve.getModule(0).getSteerMotor().getMotorVoltage().getValueAsDouble()));
+    }
 
     // @Override
     // public void teleopInit() {

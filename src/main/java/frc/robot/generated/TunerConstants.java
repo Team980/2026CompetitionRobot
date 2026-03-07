@@ -648,6 +648,8 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.measure.*;
+import frc.robot.Constants.KrakenX60;
+import frc.robot.Constants.KrakenX44;
 
 //import frc.robot.subsystems.CommandSwerveDrivetrain;
 
@@ -655,18 +657,62 @@ import edu.wpi.first.units.measure.*;
 // https://v6.docs.ctr-electronics.com/en/stable/docs/tuner/tuner-swerve/index.html
 public class TunerConstants {
     // Both sets of gains need to be tuned to your individual robot.
+     // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
+    // This may need to be tuned to your individual robot
+    private static final double kCoupleRatio = 5.4;
 
+    private static final double kDriveGearRatio = 6.48;
+    private static final double kSteerGearRatio = 12.1;
     // The steer motor uses any SwerveModule.SteerRequestType control request with the
     // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
-    private static final Slot0Configs steerGains = new Slot0Configs()
-        .withKP(1).withKI(0).withKD(0.5)
-        .withKS(0.1).withKV(1.16).withKA(0)
-        .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+    //12.0 / KrakenX60.kFreeSpeed.in(RotationsPerSecond)
+    // private static final Slot0Configs steerGains = new Slot0Configs()
+    //     .withKP(1).withKI(0).withKD(0.05)
+    //     .withKS(0.1).withKV(1.16).withKA(0)
+    //     .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
     // When using closed-loop control, the drive motor uses the control
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
+    // private static final Slot0Configs driveGains = new Slot0Configs()
+    //     .withKP(0.1).withKI(0).withKD(0)
+    //     .withKS(0).withKV(0.124);
+    private static final Slot0Configs steerGains = new Slot0Configs()
+        .withKP(5).withKI(0).withKD(0.2)
+        .withKS(0.0042258).withKV(12.0 / (KrakenX44.kFreeSpeed.in(RotationsPerSecond)/kSteerGearRatio)).withKA(0);
+    
     private static final Slot0Configs driveGains = new Slot0Configs()
         .withKP(0.1).withKI(0).withKD(0)
-        .withKS(0).withKV(0.124);
+        .withKS(0.015127).withKV(12.0 / (KrakenX60.kFreeSpeed.in(RotationsPerSecond)/kDriveGearRatio));
+
+    //probably less accurate with Ac R2 or 2.6
+    //0.57057
+    //  private static final Slot0Configs steerGains = new Slot0Configs()
+    //     .withKP( 0.29884).withKI(0).withKD(0.01)//0.29884
+    //     .withKS(0.046666).withKV(1.1464).withKA(0.027322) //KS: 0.046666 or
+    //     .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+    
+    // private static final Slot0Configs driveGains = new Slot0Configs()
+    //     .withKP(0.088729).withKI(0).withKD(0.01)
+    //     .withKS(0.015127).withKV(0.11288).withKA(0.0045477) //try KS if high: 0.0042258
+    //     .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+    //   private static final Slot0Configs steerGains = new Slot0Configs()
+    //     .withKP( 0).withKI(0).withKD(0.0)//0.29884
+    //     .withKS(0.046666).withKV(1.1464).withKA(0.027322) //KS: 0.046666 or
+    //     .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+    
+    // private static final Slot0Configs driveGains = new Slot0Configs()
+    //     .withKP(0).withKI(0).withKD(0.0)
+    //     .withKS(0.015127).withKV(0.11288).withKA(0.0045477) //try KS if high: 0.0042258
+    //     .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+
+    //  private static final Slot0Configs steerGains = new Slot0Configs()
+    //     .withKP(0.1).withKI(0).withKD(0.001)
+    //     .withKS(0.046666).withKV(12.0 / (KrakenX44.kFreeSpeed.in(RotationsPerSecond)/kSteerGearRatio)).withKA(0)
+    //     .withKA(0.027322);
+    
+    // private static final Slot0Configs driveGains = new Slot0Configs()
+    //     .withKP(0.1).withKI(0).withKD(0)
+    //     .withKS(0.015127).withKV(12.0 / (KrakenX60.kFreeSpeed.in(RotationsPerSecond)/kDriveGearRatio))
+    //     .withKA(0.0045477);
 
     // The closed-loop output type to use for the steer motors;
     // This affects the PID/FF gains for the steer motors
@@ -690,7 +736,17 @@ public class TunerConstants {
 
     // Initial configs for the drive and steer motors and the azimuth encoder; these cannot be null.
     // Some configs will be overwritten; check the `with*InitialConfigs()` API documentation.
-    private static final TalonFXConfiguration driveInitialConfigs = new TalonFXConfiguration();
+    private static final TalonFXConfiguration driveInitialConfigs = new TalonFXConfiguration()
+    .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
+        .withCurrentLimits(
+            new CurrentLimitsConfigs()
+                // Swerve azimuth does not require much torque output, so we can set a relatively low
+                // stator current limit to help avoid brownouts without impacting performance.
+                //PREVIOUSLY 120
+                .withStatorCurrentLimit(Amps.of(80))
+                .withStatorCurrentLimitEnable(true)
+                //added openloop for adjjstable speed up?
+        ).withOpenLoopRamps(new OpenLoopRampsConfigs().withVoltageOpenLoopRampPeriod(0.4));;
     private static final TalonFXConfiguration steerInitialConfigs = new TalonFXConfiguration()
         .withCurrentLimits(
             new CurrentLimitsConfigs()
@@ -711,12 +767,12 @@ public class TunerConstants {
     // This needs to be tuned to your individual robot
     public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(4.76);
 
-    // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
-    // This may need to be tuned to your individual robot
-    private static final double kCoupleRatio = 5.4;
+    // // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
+    // // This may need to be tuned to your individual robot
+    // private static final double kCoupleRatio = 5.4;
 
-    private static final double kDriveGearRatio = 6.48;
-    private static final double kSteerGearRatio = 12.1;
+    // private static final double kDriveGearRatio = 6.48;
+    // private static final double kSteerGearRatio = 12.1;
     private static final Distance kWheelRadius = Inches.of(2);
 
     private static final boolean kInvertLeftSide = false;
@@ -768,8 +824,8 @@ public class TunerConstants {
     private static final boolean kFrontLeftSteerMotorInverted = true;
     private static final boolean kFrontLeftEncoderInverted = false;
 
-    private static final Distance kFrontLeftXPos = Inches.of(10);//10
-    //private static final Distance kFrontLeftXPos = Inches.of(11);//10
+   // private static final Distance kFrontLeftXPos = Inches.of(10);//10
+    private static final Distance kFrontLeftXPos = Inches.of(11);//10
     private static final Distance kFrontLeftYPos = Inches.of(9);
 
     // Front Right
@@ -780,8 +836,8 @@ public class TunerConstants {
     private static final boolean kFrontRightSteerMotorInverted = true;
     private static final boolean kFrontRightEncoderInverted = false;
 
-    private static final Distance kFrontRightXPos = Inches.of(10);//11
-   // private static final Distance kFrontRightXPos = Inches.of(11);//11
+   // private static final Distance kFrontRightXPos = Inches.of(10);//11
+    private static final Distance kFrontRightXPos = Inches.of(11);//11
     private static final Distance kFrontRightYPos = Inches.of(-9);
 
     // Back Left
@@ -792,8 +848,8 @@ public class TunerConstants {
     private static final boolean kBackLeftSteerMotorInverted = true;
     private static final boolean kBackLeftEncoderInverted = false;
 
-    private static final Distance kBackLeftXPos = Inches.of(-10);//10
-   // private static final Distance kBackLeftXPos = Inches.of(-9);//10
+   // private static final Distance kBackLeftXPos = Inches.of(-10);//10
+    private static final Distance kBackLeftXPos = Inches.of(-9);//10
     private static final Distance kBackLeftYPos = Inches.of(9);
 
     // Back Right
@@ -804,8 +860,8 @@ public class TunerConstants {
     private static final boolean kBackRightSteerMotorInverted = true;
     private static final boolean kBackRightEncoderInverted = false;
 
-    private static final Distance kBackRightXPos = Inches.of(-10);//10
-   // private static final Distance kBackRightXPos = Inches.of(-9);//10
+   // private static final Distance kBackRightXPos = Inches.of(-10);//10
+    private static final Distance kBackRightXPos = Inches.of(-9);//10
     private static final Distance kBackRightYPos = Inches.of(-9);
 
 
