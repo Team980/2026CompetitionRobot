@@ -41,7 +41,7 @@ public final class Constants {
     }
 
     public static class FieldConstants {
-        public static final Distance FIELD_WIDTH = Inches.of(651.22);
+        public static final Distance FIELD_WIDTH = Inches.of(651.22); // AprilTagFieldLayout.loadField(...).getFieldWidth() or something like that
         public static final Distance FIELD_HEIGHT = Inches.of(317.69);
     }
 

@@ -1,20 +1,28 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Swerve;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.apriltag.AprilTag;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 
 import java.util.Optional;
 
 import org.ejml.dense.row.linsol.AdjustableLinearSolver_DDRM;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.pathplanner.lib.auto.AutoBuilder;
 
 public enum Landmark {
     // Note: Bumper width is 35 inches
@@ -109,16 +117,89 @@ public enum Landmark {
 
     
     //  - Associate april tags that go with each of the landmarks
-    public static Pose2d fromTag(String tagID) {
+    public static Optional<Pose2d> fromTag(int tagID) {
+        Optional<Pose2d> output = Optional.empty();
         if (
-            tagID.equals("25") ||
-            tagID.equals("26") ||
-            tagID.equals("21") ||
-            tagID.equals("24")
+            tagID == 2 ||
+            tagID == 3 ||
+            tagID == 4 ||
+            tagID == 5 ||
+            tagID == 8 ||
+            tagID == 9 ||
+            tagID == 10 ||
+            tagID == 11
         ) {
-            return HUB.get(Alliance.Blue); 
+            output = Optional.of(HUB.get(Alliance.Red)); 
+        } else if (
+            tagID == 6 ||
+            tagID == 7 
+        ) {
+            output = Optional.of(LEFT_TRENCH.get(Alliance.Red)); 
+        } else if (
+            tagID == 12 ||
+            tagID == 1 
+        ) {
+            output = Optional.of(RIGHT_TRENCH.get(Alliance.Red)); 
+        } else if (
+            tagID == 13 ||
+            tagID == 14
+        ) {
+            output = Optional.of(OUTPOST.get(Alliance.Red));
+        } else if (
+            tagID == 15 ||
+            tagID == 16
+        ) {
+            output = Optional.of(TOWER.get(Alliance.Red));
+        } else if (
+            tagID == 18 ||
+            tagID == 19 ||
+            tagID == 20 ||
+            tagID == 21 ||
+            tagID == 24 ||
+            tagID == 25 ||
+            tagID == 26 ||
+            tagID == 27
+        ) {
+            output = Optional.of(HUB.get(Alliance.Blue));
+        } else if (
+            tagID == 22 ||
+            tagID == 23
+        ) {
+            output = Optional.of(LEFT_TRENCH.get(Alliance.Blue));
+        } else if (
+            tagID == 17 ||
+            tagID == 28
+        ) {
+            output = Optional.of(RIGHT_TRENCH.get(Alliance.Blue));
+        } else if (
+            tagID == 29 ||
+            tagID == 30
+        ) {
+            output = Optional.of(OUTPOST.get(Alliance.Blue));
+        } else if (
+            tagID == 31 ||
+            tagID == 32
+        ) {
+            output = Optional.of(TOWER.get(Alliance.Blue));
         }
-        // NOT COMPLETE DO NOT USE
-        else return HUB.get(Alliance.Blue);
+        if (output.isEmpty()) {
+            System.out.println("ERROR! Argument for function \"fromTag\" is not valid. Please check https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf and input the right tag.");
+        }
+        return output;
     }
-}   
+    public static Optional<Pose2d> fromTag(AprilTag aprilTag) {
+        return fromTag(aprilTag.ID);
+    }
+
+    public static Optional<Command> approachTag(int ID, Distance breathingSpace) {
+        AprilTagFieldLayout field = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+        Optional<Pose3d> tagPose = field.getTagPose(ID);
+        if (!tagPose.isEmpty()) {
+            Pose2d tagPose2d = tagPose.get().toPose2d();
+            Pose2d transformedPose = tagPose2d.transformBy(new Transform2d(Constants.RobotDimensions.BUMPER_WIDTH.in(Meters)*0.5+breathingSpace.in(Meters), 0, Rotation2d.k180deg));
+            return Optional.of(AutoBuilder.pathfindToPose(transformedPose, RobotContainer.constraints, 0));
+        }
+        System.out.println("ERROR! Argument for function \"approachTag\" is not valid. Please check https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf and input the right tag.");
+        return Optional.empty();
+    } 
+}
