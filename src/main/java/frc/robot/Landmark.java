@@ -14,6 +14,8 @@ import java.util.Optional;
 
 import org.ejml.dense.row.linsol.AdjustableLinearSolver_DDRM;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+
 public enum Landmark {
     // Note: Bumper width is 35 inches
     // In the 2026 game, the origin is the bottom right corner from the blue alliance's perspective.
@@ -105,6 +107,18 @@ public enum Landmark {
     // }
 
 
-    // FUTURE TODO:
+    
     //  - Associate april tags that go with each of the landmarks
+    public static Pose2d fromTag(String tagID) {
+        if (
+            tagID.equals("25") ||
+            tagID.equals("26") ||
+            tagID.equals("21") ||
+            tagID.equals("24")
+        ) {
+            return HUB.get(Alliance.Blue); 
+        }
+        // NOT COMPLETE DO NOT USE
+        else return HUB.get(Alliance.Blue);
+    }
 }   

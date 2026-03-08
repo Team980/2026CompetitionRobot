@@ -76,7 +76,7 @@ public class RobotContainer {
     // private final Shooter shooter = new Shooter();
     // private final Hood hood = new Hood();
     // private final Hanger hanger = new Hanger();
-    public final Swerve swerve = new Swerve();
+    public final Swerve swerve = Swerve.get();
     private final Intake intake = null;
     private final Floor floor = null;
     private final Feeder feeder = null;
