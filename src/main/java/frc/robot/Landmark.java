@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.subsystems.Swerve;
 
 import static edu.wpi.first.units.Units.Inches;
 
@@ -50,6 +51,7 @@ public enum Landmark {
         }
         return bluePose;
     }
+
     public Pose2d get(Alliance alliance) {
         if (alliance == Alliance.Red) {
             if (redPose == null)
@@ -58,14 +60,51 @@ public enum Landmark {
         }
         return bluePose;
     }
+
     public Pose2d get(Transform2d adjustment) {
         return get().plus(adjustment);
     }
+
     public Pose2d get(Alliance alliance, Transform2d adjustment) {
         return get(alliance).plus(adjustment);
     }
 
+    
+    //  - Add a function that can return the nearest trench/bump
+    public Pose2d getNearest(Pose2d landmarkUno, Pose2d landmarkDos) {
+        Pose2d robotPose = Swerve.get().getState().Pose;
+        double rightDistance = 
+        Math.pow(
+            Math.pow(
+                Math.abs(landmarkUno.getX()-robotPose.getX()), 2
+            ) + 
+            Math.pow(
+                Math.abs(landmarkUno.getY()-robotPose.getY()), 2
+            ),
+            0.5);
+        double leftDistance = 
+        Math.pow(
+            Math.pow(
+                Math.abs(landmarkDos.getX()-robotPose.getX()), 2
+            ) + 
+            Math.pow(
+                Math.abs(landmarkDos.getY()-robotPose.getY()), 2
+            ),
+            0.5);
+        return leftDistance > rightDistance ? landmarkUno : landmarkDos;
+    }
+    public Pose2d getNearestBump() {
+        return getNearest(LEFT_BUMP.get(), RIGHT_BUMP.get());
+    }
+
+    public Pose2d getNearestTrench() {
+        return getNearest(LEFT_TRENCH.get(), RIGHT_TRENCH.get());
+    }
+    // public Pose2d getNearest(Pose2d landmarkUno, Pose2d landmarkDos, Pose2d robotPose) {
+    //     getNearest(landmarkUno, landmarkDos);
+    // }
+
+
     // FUTURE TODO:
     //  - Associate april tags that go with each of the landmarks
-    //  - Add a function that can return the nearest trench/bump
-}
+}   

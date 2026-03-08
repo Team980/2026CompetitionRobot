@@ -50,6 +50,7 @@ import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
 public class Swerve extends TunerSwerveDrivetrain implements Subsystem 
 {
+    private static Swerve mySwerve;
     public static double currentTargetID;
     //private static double target = 26; used when we were testing limelight targeting 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
@@ -98,7 +99,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
             new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
         };
     }
-    public Swerve() {
+    private Swerve() {
         super(
             TunerConstants.DrivetrainConstants, 
             0,
@@ -142,6 +143,13 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
         pathThetaController.enableContinuousInput(-Math.PI, Math.PI);
         // Reference to this subsystem to set requirements );
 
+    }
+
+    public static Swerve get() {
+        if (mySwerve == null) {
+            mySwerve = new Swerve();
+        }
+        return mySwerve;
     }
     private ChassisSpeeds getChassisSpeeds() {
         return getState().Speeds; 
