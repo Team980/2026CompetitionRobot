@@ -8,32 +8,77 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.Optional;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.hardware.TalonFX;
-
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.generated.TunerConstants;;
+import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.GyroIO;
+import frc.robot.subsystems.GyroIOPigeon2;
+
+import org.littletonrobotics.junction.LogFileUtil;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
  * the TimedRobot documentation. If you change the name of this class or the package after creating
  * this project, you must also update the Main.java file in the project.
  */
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
     private final RobotContainer m_robotContainer;
     private Command autonomousCommand;
+    public static Alliance alliance = DriverStation.Alliance.Red;
     
     /**
      * This function is run when the robot is first started up and should be used for any
      * initialization code.
      */
     public Robot() {
+        System.out.println("Constants.currentMode: " + Constants.currentMode);  
+        switch (Constants.currentMode) {
+            case REAL:
+                // Running on a real robot, log to a USB stick ("/U/logs")
+                Logger.addDataReceiver(new WPILOGWriter());
+                Logger.addDataReceiver(new NT4Publisher());
+                RobotController.setBrownoutVoltage(7.5);
+                break;
+
+            case SIM:
+                // Running a physics simulator, log to NT
+                Logger.addDataReceiver(new NT4Publisher());
+                break;
+
+            case REPLAY:
+                // Replaying a log, set up replay source
+                setUseTiming(false); // Run as fast as possible
+                String logPath = LogFileUtil.findReplayLog();
+                Logger.setReplaySource(new WPILOGReader(logPath));
+                Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+                break;
+        }
+         // Start AdvantageKit logger
+        Logger.start();
+
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
         m_robotContainer = new RobotContainer();
@@ -50,13 +95,33 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
+        // start at high priority for robot code to minimize latency
+        Threads.setCurrentThreadPriority(true, 99);
         // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
         // commands, running already-scheduled commands, removing finished or interrupted commands,
         // and running subsystem periodic() methods.  This must be called from the robot's periodic
         // block in order for anything in the Command-based framework to work.
+        Optional<Alliance> allianceOptional = DriverStation.getAlliance();
+        if (allianceOptional.isPresent()) {
+            alliance = allianceOptional.get();
+        } 
         CommandScheduler.getInstance().run();
 
-        // System.out.println(m_robotContainer.swerve.getState().Pose);
+        // return to default priority for non-robot code
+        Threads.setCurrentThreadPriority(false, 10);
+        Logger.recordOutput("Zeroed exterior poses", new Pose3d [] {new Pose3d()});
+        Logger.recordOutput("ZeroedInteriorPoses", new Pose3d[] {new Pose3d()});
+        Logger.recordOutput(
+        "FinalCompoenentPoses",
+        new Pose3d[] {
+          new Pose3d(
+              0, 0, Math.sin(Timer.getTimestamp()) * 0.37 - 0.07, new Rotation3d(0.0, 0.0, 0.0))
+        });
+
+      //  m_robotContainer.swerve.updateSimState(defaultPeriodSecs, defaultPeriodSecs);
+        //Odometry.update(GyroIOPigeon2., )
+
+        //System.out.println(m_robotContainer.swerve.getState().Pose);
        // System.out.println(m_robotContainer.driver.getRawAxis());
     //    var state = m_robotContainer.swerve.getState();
 
@@ -101,16 +166,28 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-        SignalLogger.writeValue("SwerveMotorVelocity",
-         RotationsPerSecond.of(m_robotContainer.swerve.getModule(0).getSteerMotor().getVelocity().getValueAsDouble()));
-         SignalLogger.writeValue("SwerveMotorPosition",
-         RotationsPerSecond.of(m_robotContainer.swerve.getModule(0).getSteerMotor().getPosition().getValueAsDouble()));
-          SignalLogger.writeValue("SwerveMotorVoltage",
-         Volts.of(m_robotContainer.swerve.getModule(0).getSteerMotor().getMotorVoltage().getValueAsDouble()));
+        // SignalLogger.writeValue("SwerveMotorVelocity",
+        //  RotationsPerSecond.of(m_robotContainer.swerve.getModule(0).getSteerMotor().getVelocity().getValueAsDouble()));
+        //  SignalLogger.writeValue("SwerveMotorPosition",
+        //  RotationsPerSecond.of(m_robotContainer.swerve.getModule(0).getSteerMotor().getPosition().getValueAsDouble()));
+        //   SignalLogger.writeValue("SwerveMotorVoltage",
+        //  Volts.of(m_robotContainer.swerve.getModule(0).getSteerMotor().getMotorVoltage().getValueAsDouble()));
     }
 
     // @Override
     // public void teleopInit() {
     //     m_robotContainer.swerve.seedFieldCentric();
     // }
+      /** This function is called once when the robot is first started up. */
+    @Override
+    public void simulationInit() {}
+
+    /** This function is called periodically whilst in simulation. */
+    @Override
+    public void simulationPeriodic() {
+        m_robotContainer.swerve.updateSimState(
+            0.02,
+            RobotController.getBatteryVoltage()
+        );
+    }
 }

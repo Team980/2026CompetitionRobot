@@ -41,15 +41,20 @@ import frc.robot.commands.AimAndDriveCommand;
 import frc.robot.commands.AutoRoutines;
 import frc.robot.commands.ManualDriveCommand;
 import frc.robot.commands.SubsystemCommands;
+import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Floor;
+import frc.robot.subsystems.GyroIO;
 import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.ModuleIOSim;
+import frc.robot.subsystems.ModuleIOTalonFX;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.OneShooter;
 import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.GyroIOPigeon2;
 import frc.robot.subsystems.PlotLandmarks;
 import frc.util.DriveInputSmoother;
 import frc.util.SwerveTelemetry;
@@ -76,7 +81,18 @@ public class RobotContainer {
     // private final Shooter shooter = new Shooter();
     // private final Hood hood = new Hood();
     // private final Hanger hanger = new Hanger();
-    public final Swerve swerve = new Swerve();
+    // public final Swerve swerve = new Swerve(
+    //             new GyroIOPigeon2(),
+    //             new ModuleIOTalonFX(TunerConstants.FrontLeft),
+    //             new ModuleIOTalonFX(TunerConstants.FrontRight),
+    //             new ModuleIOTalonFX(TunerConstants.BackLeft),
+    //             new ModuleIOTalonFX(TunerConstants.BackRight));
+       public final Swerve swerve = new Swerve(
+                new GyroIO() {},
+                new ModuleIOSim(TunerConstants.FrontLeft),
+                new ModuleIOSim(TunerConstants.FrontRight),
+                new ModuleIOSim(TunerConstants.BackLeft),
+                new ModuleIOSim(TunerConstants.BackRight));
     private final Intake intake = null;
     private final Floor floor = null;
     private final Feeder feeder = null;
@@ -151,7 +167,6 @@ public class RobotContainer {
     //  new PathConstraints(2.25, 2, Units.degreesToRadians(540), Units.degreesToRadians(720));
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-
         configureBindings();
         autoRoutines.configure();
         swerve.registerTelemetry(swerveTelemetry::telemeterize);

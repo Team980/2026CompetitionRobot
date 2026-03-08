@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -31,6 +33,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.Kinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -38,6 +42,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -47,10 +52,14 @@ import frc.robot.Landmark;
 import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.subsystems.GyroIO.GyroIOInputs;
+
+import org.littletonrobotics.junction.Logger;
 
 public class Swerve extends TunerSwerveDrivetrain implements Subsystem 
 {
     public static double currentTargetID;
+    static final Lock odometryLock = new ReentrantLock();
     //private static double target = 26; used when we were testing limelight targeting 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -58,6 +67,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
+    
 
     /** Swerve request to apply during field-centric path following */
     private final SwerveRequest.ApplyFieldSpeeds pathFieldSpeedsRequest = new SwerveRequest.ApplyFieldSpeeds();
@@ -98,7 +108,24 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
             new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
         };
     }
-    public Swerve() {
+
+    private final Module[] modules = new Module[4];
+    private final GyroIO gyroIO;
+    private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
+    private Rotation2d rawGyroRotation = new Rotation2d();
+    private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
+
+    private SwerveModulePosition[] lastModulePositions = // For delta tracking
+      new SwerveModulePosition[] {
+        new SwerveModulePosition(),
+        new SwerveModulePosition(),
+        new SwerveModulePosition(),
+        new SwerveModulePosition()
+      };
+    public Swerve(GyroIO gyroIO, ModuleIO flModuleIO,
+      ModuleIO frModuleIO,
+      ModuleIO blModuleIO,
+      ModuleIO brModuleIO) {
         super(
             TunerConstants.DrivetrainConstants, 
             0,
@@ -109,6 +136,12 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
             TunerConstants.BackLeft, 
             TunerConstants.BackRight
         );
+        this.gyroIO = gyroIO;
+        modules[0] = new Module(flModuleIO, 0, TunerConstants.FrontLeft);
+        modules[1] = new Module(frModuleIO, 1, TunerConstants.FrontRight);
+        modules[2] = new Module(blModuleIO, 2, TunerConstants.BackLeft);
+        modules[3] = new Module(brModuleIO, 3, TunerConstants.BackRight);
+        PhoenixOdometryThread.getInstance().start();
       //  driveMotor.getConfigurator().apply(config);
         // RobotConfig config;
         //  try{ 
@@ -153,31 +186,31 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
         );
     }
 
-    private final VoltageOut m_voltReq = new VoltageOut(0.0);
-    private final SysIdRoutine m_sysIdRoutine =
-   new SysIdRoutine(
-      new SysIdRoutine.Config(
-         null,        // Use default ramp rate (1 V/s)
-         Volts.of(4), // Reduce dynamic step voltage to 4 to prevent brownout
-         null,        // Use default timeout (10 s)
-                      // Log state with Phoenix SignalLogger class
-         (state) -> SignalLogger.writeString("state", state.toString())
-      ),
-      new SysIdRoutine.Mechanism(
-         (volts) -> getModule(0).getSteerMotor().setControl(m_voltReq.withOutput(volts.in(Volts))),
-         null,
-         this
-      )
-   );
+//     private final VoltageOut m_voltReq = new VoltageOut(0.0);
+//     private final SysIdRoutine m_sysIdRoutine =
+//    new SysIdRoutine(
+//       new SysIdRoutine.Config(
+//          null,        // Use default ramp rate (1 V/s)
+//          Volts.of(4), // Reduce dynamic step voltage to 4 to prevent brownout
+//          null,        // Use default timeout (10 s)
+//                       // Log state with Phoenix SignalLogger class
+//          (state) -> SignalLogger.writeString("state", state.toString())
+//       ),
+//       new SysIdRoutine.Mechanism(
+//          (volts) -> getModule(0).getSteerMotor().setControl(m_voltReq.withOutput(volts.in(Volts))),
+//          null,
+//          this
+//       )
+//    );
     
 
-    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-        return m_sysIdRoutine.quasistatic(direction);
-    }
+//     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+//         return m_sysIdRoutine.quasistatic(direction);
+//     }
 
-    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-        return m_sysIdRoutine.dynamic(direction);
-    }
+//     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+//         return m_sysIdRoutine.dynamic(direction);
+//     }
 
     /**
      * Creates a new auto factory for this drivetrain.
@@ -256,6 +289,46 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
     @Override
     public void periodic() 
     {
+        odometryLock.lock();
+        gyroIO.updateInputs(gyroInputs);
+        Logger.processInputs("Drive/Gyro", gyroInputs);
+        Logger.recordOutput("poseTest", this.getState().Pose);
+        for (var module : modules) {
+            module.periodic();
+        }
+        odometryLock.unlock();
+
+        double[] sampleTimestamps =
+        modules[0].getOdometryTimestamps(); // All signals are sampled together
+        int sampleCount = sampleTimestamps.length;
+        for (int i = 0; i < sampleCount; i++) {
+            // Read wheel positions and deltas from each module
+            SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+            SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
+            for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
+                modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
+                moduleDeltas[moduleIndex] =
+                    new SwerveModulePosition(
+                        modulePositions[moduleIndex].distanceMeters
+                            - lastModulePositions[moduleIndex].distanceMeters,
+                        modulePositions[moduleIndex].angle);
+                lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
+            }
+
+        // Update gyro angle
+            if (gyroInputs.connected) {
+                // Use the real gyro angle
+                rawGyroRotation = gyroInputs.odometryYawPositions[i];
+            } else {
+                // Use the angle delta from the kinematics and module deltas
+                rawGyroRotation =
+                    rawGyroRotation.plus(new Rotation2d(kinematics.toTwist2d(moduleDeltas).dtheta));
+            }
+            // this.simulationPeriodic();
+            // this.updateSimState(sampleTimestamps[i], RobotController.getBatteryVoltage());
+        
+        }
+        
         // test tag
         currentTargetID = LimelightHelpers.getFiducialID("limelight-pdp");
         // LimelightHelpers.SetRobotOrientation("limelight", yaw, 0.0, 0.0, 0.0, 0.0, 0.0);
@@ -284,6 +357,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+    
 
     }
 
