@@ -1,6 +1,8 @@
 package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inch;
+import static edu.wpi.first.units.Units.Meters;
 
 import java.util.function.DoubleSupplier;
 
@@ -65,10 +67,51 @@ public class AimAndDriveCommand extends Command {
     private Rotation2d getDirectionToHub() {
         final Translation2d hubPosition = Landmark.HUB.get().getTranslation();
         final Translation2d robotPosition = swerve.getState().Pose.getTranslation();
+
         final Rotation2d hubDirectionInBlueAlliancePerspective = hubPosition.minus(robotPosition).getAngle();
         final Rotation2d hubDirectionInOperatorPerspective = hubDirectionInBlueAlliancePerspective.rotateBy(swerve.getOperatorForwardDirection());
         return hubDirectionInOperatorPerspective;
     }
+     private Rotation2d getDirectionToHubPredicted() {
+
+        double distanceMeters = swerve.getState().Pose.getTranslation().getDistance(Landmark.HUB.get().getTranslation());
+
+        PrepareShotCommand.Shot shot = PrepareShotCommand.distanceToShotMap.get(Meters.of(distanceMeters));
+
+        // Compute flight time for parabolic shot
+        double flightTime = PrepareShotCommand.getFlightTimeParabolic(
+            distanceMeters,
+            shot.shooterRPM,
+            0.05,               // shooter wheel radius (m)
+            Math.toRadians(45), // launch angle
+            0.8,                // shooter height (m)
+            Inch.of(72).in(Meters)                // hub height (m)
+        );
+
+        Translation2d predictedPosition = getPredictedRobotPosition(flightTime);
+
+        Translation2d hubPosition = Landmark.HUB.get().getTranslation();
+        Rotation2d hubDirection = hubPosition.minus(predictedPosition).getAngle();
+
+
+        double yawLead = swerve.getChassisSpeeds().omegaRadiansPerSecond * flightTime;
+        hubDirection = hubDirection.plus(new Rotation2d(yawLead));
+
+        return hubDirection.rotateBy(swerve.getOperatorForwardDirection());
+    }
+
+    private Translation2d getPredictedRobotPosition(double time) {
+        var pose = swerve.getState().Pose;
+        var speeds = swerve.getChassisSpeeds();
+
+        return pose.getTranslation().plus(
+            new Translation2d(
+                speeds.vxMetersPerSecond * time,
+                speeds.vyMetersPerSecond * time
+            )
+        );
+    }
+
 
     private Rotation2d getDirectionToTower() {
         final Translation2d towerPos = Landmark.TOWER.get().getTranslation();

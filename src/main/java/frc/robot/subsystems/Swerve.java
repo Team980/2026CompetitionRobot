@@ -176,7 +176,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
         // Reference to this subsystem to set requirements );
 
     }
-    private ChassisSpeeds getChassisSpeeds() {
+    public ChassisSpeeds getChassisSpeeds() {
         return getState().Speeds; 
     } 
     private void drive(ChassisSpeeds speeds) {

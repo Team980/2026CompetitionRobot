@@ -44,12 +44,10 @@ import frc.robot.commands.SubsystemCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Floor;
-import frc.robot.subsystems.GyroIO;
 import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
-import frc.robot.subsystems.ModuleIOSim;
 import frc.robot.subsystems.ModuleIOTalonFX;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.OneShooter;
@@ -81,18 +79,12 @@ public class RobotContainer {
     // private final Shooter shooter = new Shooter();
     // private final Hood hood = new Hood();
     // private final Hanger hanger = new Hanger();
-    // public final Swerve swerve = new Swerve(
-    //             new GyroIOPigeon2(),
-    //             new ModuleIOTalonFX(TunerConstants.FrontLeft),
-    //             new ModuleIOTalonFX(TunerConstants.FrontRight),
-    //             new ModuleIOTalonFX(TunerConstants.BackLeft),
-    //             new ModuleIOTalonFX(TunerConstants.BackRight));
-       public final Swerve swerve = new Swerve(
-                new GyroIO() {},
-                new ModuleIOSim(TunerConstants.FrontLeft),
-                new ModuleIOSim(TunerConstants.FrontRight),
-                new ModuleIOSim(TunerConstants.BackLeft),
-                new ModuleIOSim(TunerConstants.BackRight));
+    public final Swerve swerve = new Swerve(
+                new GyroIOPigeon2(),
+                new ModuleIOTalonFX(TunerConstants.FrontLeft),
+                new ModuleIOTalonFX(TunerConstants.FrontRight),
+                new ModuleIOTalonFX(TunerConstants.BackLeft),
+                new ModuleIOTalonFX(TunerConstants.BackRight));
     private final Intake intake = null;
     private final Floor floor = null;
     private final Feeder feeder = null;
