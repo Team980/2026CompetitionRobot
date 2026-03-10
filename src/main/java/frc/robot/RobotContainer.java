@@ -311,6 +311,7 @@ public class RobotContainer {
         driver.leftTrigger()
             .onTrue(Commands.runOnce(() -> restrictSpeed()))
             .onFalse(Commands.runOnce(() -> unrestrictSpeed()));
+        driver.povUp().and(driver.povRight()).onTrue(Landmark.approachTag(26, Inches.of(5)).isEmpty() ? Commands.none() : Landmark.approachTag(26, Inches.of(5)).get());
     }
 
     // private Command updateVisionCommand() {
