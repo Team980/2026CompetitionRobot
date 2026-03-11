@@ -79,15 +79,15 @@ public class Hanger extends SubsystemBase {
             )
             .withMotionMagic(
                 new MotionMagicConfigs()
-                    .withMotionMagicCruiseVelocity(KrakenX60.kFreeSpeed)
-                    .withMotionMagicAcceleration(KrakenX60.kFreeSpeed.per(Second))
+                    .withMotionMagicCruiseVelocity(KrakenX60.kFreeSpeed.div(4))//TODO: change to put up KrakenX60.kFreeSpeed
+                    .withMotionMagicAcceleration(KrakenX60.kFreeSpeed.per(Second).div(4))
             )
             .withSlot0(
                 new Slot0Configs()
                     .withKP(10)
                     .withKI(0)
                     .withKD(0)
-                    .withKV(12.0 / KrakenX60.kFreeSpeed.in(RotationsPerSecond)) // 12 volts when requesting max RPS
+                    .withKV(12.0 / KrakenX60.kFreeSpeed.in(RotationsPerSecond)/4) // 12 volts when requesting max RPS
             );
 
         motor.getConfigurator().apply(config);

@@ -35,7 +35,7 @@ public class Shooter extends SubsystemBase {
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
     private final VoltageOut voltageRequest = new VoltageOut(0);
 
-    private double dashboardTargetRPM = 0.0;
+    private double dashboardTargetRPM = 30;// was 0.0
 
     public Shooter() {
         leftMotor = new TalonFX(Ports.kShooterLeft, Ports.kRoboRioCANBus);
@@ -79,26 +79,47 @@ public class Shooter extends SubsystemBase {
         motor.getConfigurator().apply(config);
     }
 
+    // public void setRPM(double rpm) {
+    //     for (final TalonFX motor : motors) {
+    //         motor.setControl(
+    //             velocityRequest
+    //                 .withVelocity(RPM.of(rpm))
+    //         );
+    //     }
+    // }
     public void setRPM(double rpm) {
         for (final TalonFX motor : motors) {
             motor.setControl(
                 velocityRequest
-                    .withVelocity(RPM.of(rpm))
+                    .withVelocity(RPM.of(rpm/4))//TODO: change to RPM.of(rpm) for testing
             );
         }
     }
 
+    // public void setPercentOutput(double percentOutput) {
+    //     for (final TalonFX motor : motors) {
+    //         motor.setControl(
+    //             voltageRequest
+    //                 .withOutput(Volts.of(percentOutput * 12.0))
+    //         );
+    //     }
+    // }
+    //TODO: lowered to 25%
     public void setPercentOutput(double percentOutput) {
         for (final TalonFX motor : motors) {
             motor.setControl(
                 voltageRequest
-                    .withOutput(Volts.of(percentOutput * 12.0))
+                    .withOutput(Volts.of(percentOutput * 3.0))
             );
         }
     }
 
     public void stop() {
         setPercentOutput(0.0);
+    }
+
+    public Command stopShootCommand() {
+        return runOnce(() -> setPercentOutput(0.0));
     }
 
     public void slowSpeed()

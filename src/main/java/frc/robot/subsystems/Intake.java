@@ -20,6 +20,9 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
@@ -40,7 +43,7 @@ public class Intake extends SubsystemBase {
         private final double percentOutput;
 
         private Speed(double percentOutput) {
-            this.percentOutput = percentOutput;
+            this.percentOutput = percentOutput/4;//TODO: change to percentOutput/4 for testing
         }
 
         public Voltage voltage() {
@@ -50,9 +53,10 @@ public class Intake extends SubsystemBase {
 
     public enum Position {
         HOMED(110),
-        STOWED(100),
+        STOWED(100), //19
         INTAKE(-4),
         AGITATE(20);
+
 
         private final double degrees;
 
@@ -69,7 +73,7 @@ public class Intake extends SubsystemBase {
     private static final AngularVelocity kMaxPivotSpeed = KrakenX60.kFreeSpeed.div(kPivotReduction);
     private static final Angle kPositionTolerance = Degrees.of(5);
 
-    private final TalonFX pivotMotor, rollerMotor;
+    public final TalonFX pivotMotor, rollerMotor;
     private final VoltageOut pivotVoltageRequest = new VoltageOut(0);
     private final MotionMagicVoltage pivotMotionMagicRequest = new MotionMagicVoltage(0).withSlot(0);
     private final VoltageOut rollerVoltageRequest = new VoltageOut(0);
@@ -89,7 +93,7 @@ public class Intake extends SubsystemBase {
         final TalonFXConfiguration config = new TalonFXConfiguration()
             .withMotorOutput(
                 new MotorOutputConfigs()
-                    .withInverted(InvertedValue.CounterClockwise_Positive)
+                    .withInverted(InvertedValue.CounterClockwise_Positive)//seems to not be counter clockwise
                     .withNeutralMode(NeutralModeValue.Brake)
             )
             .withCurrentLimits(
@@ -106,8 +110,8 @@ public class Intake extends SubsystemBase {
             )
             .withMotionMagic(
                 new MotionMagicConfigs()
-                    .withMotionMagicCruiseVelocity(kMaxPivotSpeed)
-                    .withMotionMagicAcceleration(kMaxPivotSpeed.per(Second))
+                    .withMotionMagicCruiseVelocity(kMaxPivotSpeed.div(4))//TODO: move back up
+                    .withMotionMagicAcceleration(kMaxPivotSpeed.per(Second).div(4))
             )
             .withSlot0(
                 new Slot0Configs()
@@ -156,11 +160,25 @@ public class Intake extends SubsystemBase {
         );
     }
 
+    public void setAdjusted(Position position, double adjustmentDegrees) {
+        pivotMotor.setControl(
+            pivotMotionMagicRequest
+                .withPosition(position.angle().minus(Degrees.of(adjustmentDegrees)))
+            );
+    }
+
+
     public void set(Speed speed) {
         rollerMotor.setControl(
             rollerVoltageRequest
                 .withOutput(speed.voltage())
         );
+    }
+    public Command percentMoveCommand(double percentOutput) {
+        System.out.println(pivotMotor.getSupplyCurrent().getValue().in(Amps));
+        return startEnd(() ->
+                 setPivotPercentOutput(percentOutput),
+            () -> setPivotPercentOutput(0));
     }
 
     public Command intakeCommand() {
@@ -168,6 +186,25 @@ public class Intake extends SubsystemBase {
             () -> {
                 set(Position.INTAKE);
                 set(Speed.INTAKE);
+            },
+            () -> set(Speed.STOP)
+        );
+    }
+
+    public Command intakeCommandNoWheels() {
+        return startEnd(
+            () -> {
+                set(Position.INTAKE);
+            },
+            () -> set(Speed.STOP)
+        );
+    }
+
+    public Command returnToStow()
+    {
+       return startEnd(
+            () -> {
+                setAdjusted(Position.STOWED, 20);
             },
             () -> set(Speed.STOP)
         );
@@ -191,9 +228,12 @@ public class Intake extends SubsystemBase {
     }
 
     public Command homingCommand() {
+        
         return Commands.sequence(
             runOnce(() -> setPivotPercentOutput(0.1)),
-            Commands.waitUntil(() -> pivotMotor.getSupplyCurrent().getValue().in(Amps) > 6),
+            //Commands.waitUntil(() -> pivotMotor.getSupplyCurrent().getValue().in(Amps) > 6),
+            Commands.waitUntil(() -> pivotMotor.getSupplyCurrent().getValue().in(Amps) > 0
+            && pivotMotor.getSupplyCurrent().getValue().in(Amps) < 0.25),
             runOnce(() -> {
                 pivotMotor.setPosition(Position.HOMED.angle());
                 isHomed = true;

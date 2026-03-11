@@ -27,7 +27,7 @@ public class Floor extends SubsystemBase {
         private final double percentOutput;
 
         private Speed(double percentOutput) {
-            this.percentOutput = percentOutput;
+            this.percentOutput = percentOutput/4;
         }
 
         public Voltage voltage() {

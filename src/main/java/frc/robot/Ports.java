@@ -10,16 +10,17 @@ public final class Ports {
     public static final CANBus kCANivoreCANBus = new CANBus("CANmeloAnthony");
 
     // Talon FX IDs
-    public static final int kIntakePivot = 10;
-    public static final int kIntakeRollers = 11;
-    public static final int kFloor = 12;
-    public static final int kFeeder = 13;
-    public static final int kShooterLeft = 14;
-    public static final int kShooterMiddle = 15;
-    public static final int kShooterRight = 16;
-    public static final int kHanger = 18;
+    public static final int kIntakePivot = 50; // motor let pivot right
+    public static final int kIntakeRollers = 51; // motor on slamtake
+    public static final int kFloor = 52; // left conveyor belt floor
+    public static final int kFeeder = 53; // left preshoot motors
+    public static final int kShooterLeft = 54;
+    public static final int kShooterMiddle = 55;
+    public static final int kShooterRight = 56;
+    public static final int kHanger = 58; //right motor on hangar
+   // public static final int kHangerRight = 59;
 
     // PWM Ports
-    public static final int kHoodLeftServo = 3;
-    public static final int kHoodRightServo = 4;
+    public static final int kHoodLeftServo = 15;
+    public static final int kHoodRightServo = 16;
 }

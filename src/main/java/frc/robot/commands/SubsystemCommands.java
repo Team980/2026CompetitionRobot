@@ -19,7 +19,7 @@ public final class SubsystemCommands {
     private final Intake intake;
     private final Floor floor;
     private final Feeder feeder;
-    private final OneShooter shooter;
+    private final Shooter shooter;
     private final Hood hood;
     private final Hanger hanger;
 
@@ -31,7 +31,8 @@ public final class SubsystemCommands {
         Intake intake,
         Floor floor,
         Feeder feeder,
-        OneShooter shooter,
+        // OneShooter shooter,
+        Shooter shooter,
         Hood hood,
         Hanger hanger,
         DoubleSupplier forwardInput,
@@ -47,7 +48,7 @@ public final class SubsystemCommands {
 
         this.forwardInput = forwardInput;
         this.leftInput = leftInput;
-        System.out.println(shooter);
+        //System.out.println(shooter);
     }
 
     public SubsystemCommands(
@@ -55,7 +56,7 @@ public final class SubsystemCommands {
         Intake intake,
         Floor floor,
         Feeder feeder,
-        OneShooter shooter,
+        Shooter shooter,
         Hood hood,
         Hanger hanger
     ) {
@@ -106,7 +107,7 @@ public final class SubsystemCommands {
 
     public Command shootHalf() {
         System.out.println("IsPressed");
-        return shooter.testSpin(0.5);
+        return shooter.spinUpCommand(30);
     }
 
     public Command stopShooter()
@@ -115,8 +116,6 @@ public final class SubsystemCommands {
         return shooter.stopShootCommand();
     }
 
-
-    
 
     private Command feed() {
         return Commands.sequence(

@@ -72,26 +72,27 @@ public class RobotContainer {
     // For landmark visualizaton
     private final PlotLandmarks plotter = new PlotLandmarks();
     private final SendableChooser<Command> autoChooser;
-    // private final Swerve swerve = new Swerve();
-    // private final Intake intake = new Intake();
-    // private final Floor floor = new Floor();
-    // private final Feeder feeder = new Feeder();
-    // private final Shooter shooter = new Shooter();
-    // private final Hood hood = new Hood();
-    // private final Hanger hanger = new Hanger();
+    //private final Swerve swerve = new Swerve();
+    public final Intake intake = new Intake();
+    private final Floor floor = new Floor();
+    private final Feeder feeder = new Feeder();
+    private final Shooter shooter = new Shooter();
+    private final Hood hood = new Hood();
+    private final Hanger hanger = new Hanger();
     public final Swerve swerve = new Swerve(
                 new GyroIOPigeon2(),
                 new ModuleIOTalonFX(TunerConstants.FrontLeft),
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-    private final Intake intake = null;
-    private final Floor floor = null;
-    private final Feeder feeder = null;
-    //private final Shooter shooter = null;
-    private final OneShooter shooter = null;
-    private final Hood hood = null;
-    private final Hanger hanger = null;
+    // private final Intake intake = null;
+    // private final Floor floor = null;
+    // private final Feeder feeder = null;
+    // //private final Shooter shooter = null;
+    // private final OneShooter shooter = null;
+    // private final Hood hood = null;
+    // private final Hanger hanger = null;
+    // private final Hanger leftHanger = null; //one is opposite
     private final Limelight limelight = new Limelight("limelight-pdp");
 
     private final SwerveTelemetry swerveTelemetry = new SwerveTelemetry(Driving.kMaxSpeed.in(MetersPerSecond));
@@ -270,11 +271,19 @@ public class RobotContainer {
         // RobotModeTriggers.autonomous().or(RobotModeTriggers.teleop())
         //     .onTrue(intake.homingCommand())
         //     .onTrue(hanger.homingCommand());
+        driver.leftTrigger()
+            .onTrue(intake.homingCommand());
+        driver.rightTrigger()
+            .onTrue(intake.intakeCommandNoWheels());
+          //  .onTrue(hanger.homingCommand());
 
-        //driver.rightTrigger().whileTrue(subsystemCommands.aimAndShoot());
-       //  driver.rightBumper().whileTrue(subsystemCommands.shootManually());
-        //  driver.leftTrigger().whileTrue(intake.intakeCommand());
-        // driver.leftBumper().onTrue(intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
+      //  driver.rightTrigger().whileTrue(subsystemCommands.aimAndShoot());
+       // driver.rightBumper().whileTrue(subsystemCommands.shootManually());
+       driver.rightBumper().whileTrue(subsystemCommands.shootHalf()).whileFalse(subsystemCommands.stopShooter());
+     //    driver.leftTrigger().whileTrue(intake.intakeCommandNoWheels());
+     //positive should go outwards
+         driver.x().whileTrue(intake.percentMoveCommand(0.05)).whileFalse(intake.percentMoveCommand(0.0));
+         driver.b().whileTrue(intake.percentMoveCommand(-0.05)).whileFalse(intake.percentMoveCommand(0.0));
        /// System.out.println("subsystemCommands:"  + subsystemCommands);
        
         // driver.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
@@ -293,10 +302,12 @@ public class RobotContainer {
 
         // driver.povUp().whileTrue(subsystemCommands.shootHalf());
         // driver.povDown().whileTrue(subsystemCommands.stopShooter());
-        // driver.rightTrigger().whileTrue(subsystemCommands.testAim());
+        // driver.y().onTrue(hood.positionCommand(0.5));
+        // driver.a().onTrue(hood.positionCommand(0.25));
+     //   driver.rightTrigger().whileTrue(subsystemCommands.testAim());
 
-       /* driver.povUp().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
-        driver.povDown().onTrue(hanger.positionCommand(Hanger.Position.HUNG));*/
+        driver.povRight().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
+        driver.povLeft().onTrue(hanger.positionCommand(Hanger.Position.HUNG));
     }
 
     private void configureManualDriveBindings() {
@@ -307,17 +318,14 @@ public class RobotContainer {
             () -> -driver.getRightX()*speedFactor
         );
         swerve.setDefaultCommand(manualDriveCommand);
-        driver.a().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.k180deg)));
-        driver.b().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.kCW_90deg)));
-        driver.x().onTrue(Commands.runOnce(()
-        
-        
-        -> manualDriveCommand.setLockedHeading(Rotation2d.kCCW_90deg)));
-        driver.y().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.kZero)));
-        driver.leftBumper().onTrue(Commands.runOnce(() -> manualDriveCommand.seedFieldCentric()));
-        driver.leftTrigger()
-            .onTrue(Commands.runOnce(() -> restrictSpeed()))
-            .onFalse(Commands.runOnce(() -> unrestrictSpeed()));
+        // driver.a().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.k180deg)));
+        // driver.b().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.kCW_90deg)));
+        // driver.x().onTrue(Commands.runOnce(()-> manualDriveCommand.setLockedHeading(Rotation2d.kCCW_90deg)));
+        // driver.y().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.kZero)));
+        // driver.leftBumper().onTrue(Commands.runOnce(() -> manualDriveCommand.seedFieldCentric()));
+        // driver.leftTrigger()
+        //     .onTrue(Commands.runOnce(() -> restrictSpeed()))
+        //     .onFalse(Commands.runOnce(() -> unrestrictSpeed()));
     }
 
     // private Command updateVisionCommand() {

@@ -32,8 +32,8 @@ public final class AutoRoutines {
     private final Intake intake;
     private final Floor floor;
     private final Feeder feeder;
-    //private final Shooter shooter;
-    private final OneShooter shooter;
+    private final Shooter shooter;
+    // private final OneShooter shooter;
     private final Hood hood;
     private final Hanger hanger;
     private final Limelight limelight;
@@ -48,7 +48,7 @@ public final class AutoRoutines {
         Intake intake,
         Floor floor,
         Feeder feeder,
-        OneShooter shooter,
+        Shooter shooter,
         Hood hood,
         Hanger hanger,
         Limelight limelight

@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
@@ -101,7 +102,9 @@ public class Robot extends LoggedRobot {
         // commands, running already-scheduled commands, removing finished or interrupted commands,
         // and running subsystem periodic() methods.  This must be called from the robot's periodic
         // block in order for anything in the Command-based framework to work.
+       System.out.println( m_robotContainer.intake.pivotMotor.getSupplyCurrent().getValue().in(Amps));
         Optional<Alliance> allianceOptional = DriverStation.getAlliance();
+    
         if (allianceOptional.isPresent()) {
             alliance = allianceOptional.get();
         } 

@@ -25,12 +25,12 @@ import frc.robot.Ports;
 
 public class Feeder extends SubsystemBase {
     public enum Speed {
-        FEED(5000);
+        FEED(5000/4);//TODO: undivide by 4
 
         private final double rpm;
 
         private Speed(double rpm) {
-            this.rpm = rpm;
+            this.rpm = rpm/4;
         }
 
         public AngularVelocity angularVelocity() {
@@ -80,7 +80,7 @@ public class Feeder extends SubsystemBase {
     public void setPercentOutput(double percentOutput) {
         motor.setControl(
             voltageRequest
-                .withOutput(Volts.of(percentOutput * 12.0))
+                .withOutput(Volts.of(percentOutput * 3.0))//TODO: change to 3 volts for testing
         );
     }
 

@@ -44,21 +44,21 @@ public class PrepareShotCommand extends Command {
         distanceToShotMap.put(Inches.of(165.5), new Shot(3650, 0.48));
     }
 
-    private final OneShooter shooter;
+    private final Shooter shooter;
     private final Hood hood;
     private final Supplier<Pose2d> robotPoseSupplier;
-    private final Swerve swerve;
 
-    public PrepareShotCommand(OneShooter shooter, Hood hood, Supplier<Pose2d> robotPoseSupplier, Swerve swerve) {
+    public PrepareShotCommand(Shooter shooter, Hood hood, Supplier<Pose2d> robotPoseSupplier) {
         this.shooter = shooter;
         this.hood = hood;
         this.robotPoseSupplier = robotPoseSupplier;
-        this.swerve = swerve;
 
         //TODO: Uncomment all hood code later when ready
-        //addRequirements(shooter, hood);
-        addRequirements(shooter);
+        addRequirements(shooter, hood);
+      //  addRequirements(shooter);
     }
+
+    
 
     // public boolean isReadyToShoot() {
     //     return shooter.isVelocityWithinTolerance() && hood.isPositionWithinTolerance();
@@ -74,24 +74,24 @@ public class PrepareShotCommand extends Command {
         return Meters.of(robotPosition.getDistance(hubPosition));
     }
 
-     private Distance getDistanceToHubPredicted() {
-        ChassisSpeeds speeds = swerve.getChassisSpeeds();
-        // Compute flight time for parabolic shot
-        double flightTime = PrepareShotCommand.getFlightTimeParabolic(
-            getDistanceToHub().in(Meters),
-            distanceToShotMap.get(getDistanceToHub()).shooterRPM,
-            0.05,               // shooter wheel radius (m)
-            Math.toRadians(45), // launch angle
-            0.8,                // shooter height (m)
-            Inch.of(72).in(Meters)                // hub height (m)
-        );
-        final Translation2d robotPosition = robotPoseSupplier.get().getTranslation().plus
-        (new Translation2d(speeds.vxMetersPerSecond * flightTime
-        , speeds.vyMetersPerSecond * flightTime));
+    //  private Distance getDistanceToHubPredicted() {
+    //     ChassisSpeeds speeds = S.getChassisSpeeds();
+    //     // Compute flight time for parabolic shot
+    //     double flightTime = PrepareShotCommand.getFlightTimeParabolic(
+    //         getDistanceToHub().in(Meters),
+    //         distanceToShotMap.get(getDistanceToHub()).shooterRPM,
+    //         0.05,               // shooter wheel radius (m)
+    //         Math.toRadians(45), // launch angle
+    //         0.8,                // shooter height (m)
+    //         Inch.of(72).in(Meters)                // hub height (m)
+    //     );
+    //     final Translation2d robotPosition = robotPoseSupplier.get().getTranslation().plus
+    //     (new Translation2d(speeds.vxMetersPerSecond * flightTime
+    //     , speeds.vyMetersPerSecond * flightTime));
 
-        final Translation2d hubPosition = Landmark.HUB.get().getTranslation();
-        return Meters.of(robotPosition.getDistance(hubPosition));
-    }
+    //     final Translation2d hubPosition = Landmark.HUB.get().getTranslation();
+    //     return Meters.of(robotPosition.getDistance(hubPosition));
+    // }
 
     /**
      * Calculates the flight time of a ball shot in an arc.
@@ -149,8 +149,8 @@ public class PrepareShotCommand extends Command {
         final Distance distanceToHub = getDistanceToHub();
         final Shot shot = distanceToShotMap.get(distanceToHub);
         //shooter.setRPM(shot.shooterRPM);
-        shooter.setPercentOutput(0.5);
-        //hood.setPosition(shot.hoodPosition);
+        shooter.setPercentOutput(0.5); //TODO: change to shooter.setRPM(shot.shooterRPM) for testing
+        hood.setPosition(shot.hoodPosition);
 
         SmartDashboard.putNumber("Distance to Hub (inches)", distanceToHub.in(Inches));
     }
