@@ -97,7 +97,7 @@ public final class AutoRoutines {
         routine.observe(hanger::isHomed).onTrue(
             Commands.sequence(
                 Commands.waitSeconds(0.5),
-                intake.runOnce(() -> intake.set(Intake.Position.INTAKE))
+                intake.runOnce(() -> intake.set(Intake.Position.ReadyToIntake))
             )
         );
 

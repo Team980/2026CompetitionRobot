@@ -35,7 +35,7 @@ public class Shooter extends SubsystemBase {
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
     private final VoltageOut voltageRequest = new VoltageOut(0);
 
-    private double dashboardTargetRPM = 30;// was 0.0
+    private double dashboardTargetRPM = 6000;// was 0.0
 
     public Shooter() {
         leftMotor = new TalonFX(Ports.kShooterLeft, Ports.kRoboRioCANBus);
@@ -43,10 +43,12 @@ public class Shooter extends SubsystemBase {
         rightMotor = new TalonFX(Ports.kShooterRight, Ports.kRoboRioCANBus);
         motors = List.of(leftMotor, middleMotor, rightMotor);
 
-        configureMotor(leftMotor, InvertedValue.CounterClockwise_Positive);
+        configureMotor(leftMotor, InvertedValue.Clockwise_Positive);
+        configureMotor(middleMotor, InvertedValue.CounterClockwise_Positive);
+        configureMotor(rightMotor, InvertedValue.CounterClockwise_Positive);
+        /*   configureMotor(leftMotor, InvertedValue.CounterClockwise_Positive);//
         configureMotor(middleMotor, InvertedValue.Clockwise_Positive);
-        configureMotor(rightMotor, InvertedValue.Clockwise_Positive);
-
+        configureMotor(rightMotor, InvertedValue.Clockwise_Positive); */
         SmartDashboard.putData(this);
     }
 
@@ -91,7 +93,7 @@ public class Shooter extends SubsystemBase {
         for (final TalonFX motor : motors) {
             motor.setControl(
                 velocityRequest
-                    .withVelocity(RPM.of(rpm/4))//TODO: change to RPM.of(rpm) for testing
+                    .withVelocity(RPM.of(rpm))//TODO: change to RPM.of(rpm) for testing
             );
         }
     }

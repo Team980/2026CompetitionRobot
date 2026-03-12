@@ -19,6 +19,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;
@@ -102,7 +103,8 @@ public class Robot extends LoggedRobot {
         // commands, running already-scheduled commands, removing finished or interrupted commands,
         // and running subsystem periodic() methods.  This must be called from the robot's periodic
         // block in order for anything in the Command-based framework to work.
-       System.out.println( m_robotContainer.intake.pivotMotor.getSupplyCurrent().getValue().in(Amps));
+      // System.out.println( m_robotContainer.intake.pivotMotor.getPosition().getValueAsDouble());
+      // System.out.println(m_robotContainer.intake.pivotMotor.rotation);
         Optional<Alliance> allianceOptional = DriverStation.getAlliance();
     
         if (allianceOptional.isPresent()) {

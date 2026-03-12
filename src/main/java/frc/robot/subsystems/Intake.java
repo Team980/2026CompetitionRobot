@@ -38,7 +38,8 @@ import frc.robot.Ports;
 public class Intake extends SubsystemBase {
     public enum Speed {
         STOP(0),
-        INTAKE(0.8);
+        INTAKE(0.8),
+        STALL(1);
 
         private final double percentOutput;
 
@@ -49,13 +50,21 @@ public class Intake extends SubsystemBase {
         public Voltage voltage() {
             return Volts.of(percentOutput * 12.0);
         }
+
+        public double get()
+        {
+            return percentOutput;
+        }
     }
 
+
     public enum Position {
-        HOMED(110),
-        STOWED(100), //19
-        INTAKE(-4),
-        AGITATE(20);
+        // HOMED(110),
+        // STOWED(100), //-1, try -2
+        // INTAKE(-4),
+        AGITATE(-90), //-10
+        ReadyToIntake(-110),
+        Start(0);
 
 
         private final double degrees;
@@ -66,6 +75,11 @@ public class Intake extends SubsystemBase {
 
         public Angle angle() {
             return Degrees.of(degrees);
+        }
+
+        public double value()
+        {
+            return degrees;
         }
     }
 
@@ -88,6 +102,40 @@ public class Intake extends SubsystemBase {
         configureRollerMotor();
         SmartDashboard.putData(this);
     }
+    
+    private double stallCounter = 0;
+
+    @Override
+    public void periodic() {
+        if(stallCounter > 5)
+        {
+            pivotMotor.stopMotor();
+            System.out.println("Pivot motor stalled, stopping motor to prevent damage");
+        }
+        double velocity = pivotMotor.getVelocity().getValueAsDouble();
+        double current = pivotMotor.getStatorCurrent().getValueAsDouble();
+        double output = pivotMotor.getDutyCycle().getValueAsDouble();
+
+        SmartDashboard.putNumber("Collector Velocity", velocity);
+        SmartDashboard.putNumber("Collector Current", current);
+
+        boolean tryingToMove = Math.abs(output) > 0.2;
+        boolean lowVelocity = Math.abs(velocity) < 1;
+        boolean highCurrent = current > 40;
+
+        if (tryingToMove && lowVelocity && highCurrent) {
+            stallCounter++;
+        } else {
+            stallCounter = 0;
+        }
+
+        boolean stalled = stallCounter > 5;
+
+        SmartDashboard.putBoolean("Collector Stalled", stalled);
+        
+
+    }
+
 
     private void configurePivotMotor() {
         final TalonFXConfiguration config = new TalonFXConfiguration()
@@ -98,7 +146,7 @@ public class Intake extends SubsystemBase {
             )
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(Amps.of(120))
+                    .withStatorCurrentLimit(Amps.of(60))//was 120
                     .withStatorCurrentLimitEnable(true)
                     .withSupplyCurrentLimit(Amps.of(70))
                     .withSupplyCurrentLimitEnable(true)
@@ -110,8 +158,8 @@ public class Intake extends SubsystemBase {
             )
             .withMotionMagic(
                 new MotionMagicConfigs()
-                    .withMotionMagicCruiseVelocity(kMaxPivotSpeed.div(4))//TODO: move back up
-                    .withMotionMagicAcceleration(kMaxPivotSpeed.per(Second).div(4))
+                    .withMotionMagicCruiseVelocity(kMaxPivotSpeed.div(8))//TODO: move back up
+                    .withMotionMagicAcceleration(kMaxPivotSpeed.per(Second).div(8))
             )
             .withSlot0(
                 new Slot0Configs()
@@ -121,6 +169,8 @@ public class Intake extends SubsystemBase {
                     .withKV(12.0 / kMaxPivotSpeed.in(RotationsPerSecond)) // 12 volts when requesting max RPS
             );
         pivotMotor.getConfigurator().apply(config);
+
+        pivotMotor.setPosition(0.0);
     }
 
     private void configureRollerMotor() {
@@ -158,6 +208,7 @@ public class Intake extends SubsystemBase {
             pivotMotionMagicRequest
                 .withPosition(position.angle())
         );
+        
     }
 
     public void setAdjusted(Position position, double adjustmentDegrees) {
@@ -174,6 +225,7 @@ public class Intake extends SubsystemBase {
                 .withOutput(speed.voltage())
         );
     }
+    
     public Command percentMoveCommand(double percentOutput) {
         System.out.println(pivotMotor.getSupplyCurrent().getValue().in(Amps));
         return startEnd(() ->
@@ -184,27 +236,36 @@ public class Intake extends SubsystemBase {
     public Command intakeCommand() {
         return startEnd(
             () -> {
-                set(Position.INTAKE);
+                set(Position.ReadyToIntake);
                 set(Speed.INTAKE);
             },
             () -> set(Speed.STOP)
         );
     }
 
-    public Command intakeCommandNoWheels() {
+    public Command GoOut() {
         return startEnd(
             () -> {
-                set(Position.INTAKE);
+                set(Position.ReadyToIntake);
             },
             () -> set(Speed.STOP)
         );
     }
 
-    public Command returnToStow()
+    public void resetDeployEncoder(){
+        pivotMotor.setPosition(0);
+    }
+
+    public void stopMotor()
+    {
+        pivotMotor.stopMotor();
+    }
+
+    public Command ReturnIn()
     {
        return startEnd(
             () -> {
-                setAdjusted(Position.STOWED, 20);
+                set(Position.Start);
             },
             () -> set(Speed.STOP)
         );
@@ -216,33 +277,34 @@ public class Intake extends SubsystemBase {
                 Commands.sequence(
                     runOnce(() -> set(Position.AGITATE)),
                     Commands.waitUntil(this::isPositionWithinTolerance),
-                    runOnce(() -> set(Position.INTAKE)),
+                    runOnce(() -> set(Position.ReadyToIntake)),
                     Commands.waitUntil(this::isPositionWithinTolerance)
                 )
                 .repeatedly()
             )
             .handleInterrupt(() -> {
-                set(Position.INTAKE);
+                set(Position.ReadyToIntake);
                 set(Speed.STOP);
             });
     }
 
-    public Command homingCommand() {
+    //ran till hardstop with amp check
+    // public Command homingCommand() {
         
-        return Commands.sequence(
-            runOnce(() -> setPivotPercentOutput(0.1)),
-            //Commands.waitUntil(() -> pivotMotor.getSupplyCurrent().getValue().in(Amps) > 6),
-            Commands.waitUntil(() -> pivotMotor.getSupplyCurrent().getValue().in(Amps) > 0
-            && pivotMotor.getSupplyCurrent().getValue().in(Amps) < 0.25),
-            runOnce(() -> {
-                pivotMotor.setPosition(Position.HOMED.angle());
-                isHomed = true;
-                set(Position.STOWED);
-            })
-        )
-        .unless(() -> isHomed)
-        .withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
-    }
+    //     return Commands.sequence(
+    //         runOnce(() -> setPivotPercentOutput(0.1)),
+    //         //Commands.waitUntil(() -> pivotMotor.getSupplyCurrent().getValue().in(Amps) > 6),
+    //         Commands.waitUntil(() -> pivotMotor.getSupplyCurrent().getValue().in(Amps) > 0
+    //         && pivotMotor.getSupplyCurrent().getValue().in(Amps) < 0.25),
+    //         runOnce(() -> {
+    //             pivotMotor.setPosition(Position.HOMED.angle());
+    //             isHomed = true;
+    //             set(Position.STOWED);
+    //         })
+    //     )
+    //     .unless(() -> isHomed)
+    //     .withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+    // }
 
     @Override
     public void initSendable(SendableBuilder builder) {

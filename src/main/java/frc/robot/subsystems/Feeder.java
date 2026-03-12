@@ -25,12 +25,12 @@ import frc.robot.Ports;
 
 public class Feeder extends SubsystemBase {
     public enum Speed {
-        FEED(5000/4);//TODO: undivide by 4
+        FEED(5000/10);//TODO: undivide by 4
 
         private final double rpm;
 
         private Speed(double rpm) {
-            this.rpm = rpm/4;
+            this.rpm = rpm;
         }
 
         public AngularVelocity angularVelocity() {

@@ -52,6 +52,7 @@ import frc.robot.subsystems.ModuleIOTalonFX;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.OneShooter;
 import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.Floor.Speed;
 import frc.robot.subsystems.GyroIOPigeon2;
 import frc.robot.subsystems.PlotLandmarks;
 import frc.util.DriveInputSmoother;
@@ -272,14 +273,28 @@ public class RobotContainer {
         //     .onTrue(intake.homingCommand())
         //     .onTrue(hanger.homingCommand());
         driver.leftTrigger()
-            .onTrue(intake.homingCommand());
+            .onTrue(intake.GoOut());
         driver.rightTrigger()
-            .onTrue(intake.intakeCommandNoWheels());
+            .onTrue(intake.ReturnIn());
+        Command zeroCommand = intake.runOnce(() -> intake.resetDeployEncoder());
+        driver.rightBumper()
+            .onTrue(zeroCommand);
+        Command stopCommand = intake.runOnce(() -> intake.stopMotor());
+          driver.leftBumper()
+            .onTrue(stopCommand);
+
+        Command speedCommand = floor.runOnce(() -> floor.set(Speed.FEED));
+        driver.y().whileTrue(floor.feedCommand());
+
+        driver.a().whileTrue(feeder.feedCommand());
+        driver.povUp().whileTrue(shooter.dashboardSpinUpCommand()).whileFalse(shooter.stopShootCommand());
+       // Command feedStop = floor.runOnce(() -> floor.set(Speed.STOP));
+       //  driver.a().whileTrue(feedStop);
           //  .onTrue(hanger.homingCommand());
 
       //  driver.rightTrigger().whileTrue(subsystemCommands.aimAndShoot());
        // driver.rightBumper().whileTrue(subsystemCommands.shootManually());
-       driver.rightBumper().whileTrue(subsystemCommands.shootHalf()).whileFalse(subsystemCommands.stopShooter());
+    //   driver.rightBumper().whileTrue(subsystemCommands.shootHalf()).whileFalse(subsystemCommands.stopShooter());
      //    driver.leftTrigger().whileTrue(intake.intakeCommandNoWheels());
      //positive should go outwards
          driver.x().whileTrue(intake.percentMoveCommand(0.05)).whileFalse(intake.percentMoveCommand(0.0));
@@ -306,8 +321,8 @@ public class RobotContainer {
         // driver.a().onTrue(hood.positionCommand(0.25));
      //   driver.rightTrigger().whileTrue(subsystemCommands.testAim());
 
-        driver.povRight().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
-        driver.povLeft().onTrue(hanger.positionCommand(Hanger.Position.HUNG));
+        // driver.povRight().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
+        // driver.povLeft().onTrue(hanger.positionCommand(Hanger.Position.HUNG));
     }
 
     private void configureManualDriveBindings() {
