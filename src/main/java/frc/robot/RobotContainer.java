@@ -67,9 +67,13 @@ import frc.util.SwerveTelemetry;
 public class RobotContainer {
     public static boolean isInTeleop = false;
     public static Pose2d lastPose;
-    public static double restrictedSpeed = 0.4; //TODO: Remove Speed restriction
-    public static double unrestrictedSpeed = 0.6;
+    public static double restrictedSpeed = 0.5; //TODO: Remove Speed restriction
+    public static double unrestrictedSpeed = 1;
+    public static double restrictedRotation = 0.5;
+    public static double unrestrictedRotation = 1;
     public static double speedFactor = unrestrictedSpeed;
+    public static double rotationFactor = unrestrictedRotation;
+    
     // For landmark visualizaton
     private final PlotLandmarks plotter = new PlotLandmarks();
     private final SendableChooser<Command> autoChooser;
@@ -99,6 +103,7 @@ public class RobotContainer {
     private final SwerveTelemetry swerveTelemetry = new SwerveTelemetry(Driving.kMaxSpeed.in(MetersPerSecond));
     
     public final CommandXboxController driver = new CommandXboxController(0);
+    public final CommandXboxController operator = new CommandXboxController(1);
 
     public static void restrictSpeed() {
         speedFactor = restrictedSpeed;
@@ -108,6 +113,18 @@ public class RobotContainer {
         speedFactor = unrestrictedSpeed;
         DriveInputSmoother.joystickDeadband = 0.1*speedFactor;
     }
+
+    public static void restrictRotation()
+    {
+        rotationFactor = restrictedRotation;
+    }
+
+    public static void unrestrictRotation()
+    {
+        rotationFactor = unrestrictedRotation;
+    }
+
+
     // private final AutoRoutines autoRoutines = new AutoRoutines(
     //     swerve,
     //     null,
@@ -272,22 +289,22 @@ public class RobotContainer {
         // RobotModeTriggers.autonomous().or(RobotModeTriggers.teleop())
         //     .onTrue(intake.homingCommand())
         //     .onTrue(hanger.homingCommand());
-        driver.leftTrigger()
+        operator.b()
             .onTrue(intake.GoOut());
-        driver.rightTrigger()
+        operator.x()
             .onTrue(intake.ReturnIn());
-        Command zeroCommand = intake.runOnce(() -> intake.resetDeployEncoder());
-        driver.rightBumper()
-            .onTrue(zeroCommand);
+         Command zeroCommand = intake.runOnce(() -> intake.resetDeployEncoder());
+         operator.povDown()
+             .onTrue(zeroCommand);
         Command stopCommand = intake.runOnce(() -> intake.stopMotor());
-          driver.leftBumper()
+          operator.povUp()
             .onTrue(stopCommand);
 
         Command speedCommand = floor.runOnce(() -> floor.set(Speed.FEED));
-        driver.y().whileTrue(floor.feedCommand());
+        operator.leftTrigger().whileTrue(floor.feedCommand());
 
-        driver.a().whileTrue(feeder.feedCommand());
-        driver.povUp().whileTrue(shooter.dashboardSpinUpCommand()).whileFalse(shooter.stopShootCommand());
+        operator.rightBumper().whileTrue(feeder.feedCommand());
+        operator.rightTrigger().whileTrue(shooter.dashboardSpinUpCommand()).whileFalse(shooter.stopShootCommand());
        // Command feedStop = floor.runOnce(() -> floor.set(Speed.STOP));
        //  driver.a().whileTrue(feedStop);
           //  .onTrue(hanger.homingCommand());
@@ -297,8 +314,8 @@ public class RobotContainer {
     //   driver.rightBumper().whileTrue(subsystemCommands.shootHalf()).whileFalse(subsystemCommands.stopShooter());
      //    driver.leftTrigger().whileTrue(intake.intakeCommandNoWheels());
      //positive should go outwards
-         driver.x().whileTrue(intake.percentMoveCommand(0.05)).whileFalse(intake.percentMoveCommand(0.0));
-         driver.b().whileTrue(intake.percentMoveCommand(-0.05)).whileFalse(intake.percentMoveCommand(0.0));
+          operator.povRight().whileTrue(intake.percentMoveCommand(0.05)).whileFalse(intake.percentMoveCommand(0.0));
+         operator.povLeft().whileTrue(intake.percentMoveCommand(-0.05)).whileFalse(intake.percentMoveCommand(0.0));
        /// System.out.println("subsystemCommands:"  + subsystemCommands);
        
         // driver.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
@@ -330,17 +347,22 @@ public class RobotContainer {
             swerve, 
             () -> -driver.getLeftY()*speedFactor, 
             () -> -driver.getLeftX()*speedFactor, 
-            () -> -driver.getRightX()*speedFactor
+            () -> -driver.getRightX()*rotationFactor
         );
+       // Commands.runOnce(() -> swerve.SetControl())
         swerve.setDefaultCommand(manualDriveCommand);
-        // driver.a().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.k180deg)));
-        // driver.b().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.kCW_90deg)));
-        // driver.x().onTrue(Commands.runOnce(()-> manualDriveCommand.setLockedHeading(Rotation2d.kCCW_90deg)));
-        // driver.y().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.kZero)));
-        // driver.leftBumper().onTrue(Commands.runOnce(() -> manualDriveCommand.seedFieldCentric()));
-        // driver.leftTrigger()
-        //     .onTrue(Commands.runOnce(() -> restrictSpeed()))
-        //     .onFalse(Commands.runOnce(() -> unrestrictSpeed()));
+       // driver.leftBumper.onTrue(Commands.run(() -> manualDriveCommand.setLockedHeading(Rotation2d.k45deg)));
+        // driver.povUp().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.k180deg)));
+        // driver.povRight().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.kCW_90deg)));
+        // driver.povLeft().onTrue(Commands.runOnce(()-> manualDriveCommand.setLockedHeading(Rotation2d.kCCW_90deg)));
+        // driver.povDown().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.kZero)));
+
+         driver.x().onTrue(Commands.runOnce(() -> manualDriveCommand.seedFieldCentric()));
+        driver.leftTrigger()
+            .whileTrue(Commands.runOnce(() -> restrictSpeed())).whileFalse(Commands.runOnce(() -> unrestrictSpeed()));
+        driver.rightTrigger()
+            .whileTrue(Commands.runOnce(() -> restrictRotation())).whileFalse(Commands.runOnce(() -> unrestrictRotation()));
+            //.onFalse(Commands.runOnce(() -> unrestrictSpeed()));
     }
 
     // private Command updateVisionCommand() {

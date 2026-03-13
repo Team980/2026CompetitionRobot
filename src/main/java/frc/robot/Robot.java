@@ -51,6 +51,7 @@ public class Robot extends LoggedRobot {
     private Command autonomousCommand;
     public static Alliance alliance = DriverStation.Alliance.Red;
     
+    
     /**
      * This function is run when the robot is first started up and should be used for any
      * initialization code.

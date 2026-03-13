@@ -31,9 +31,9 @@ public class AimAndDriveCommand extends Command {
     private final Swerve swerve;
     private final DriveInputSmoother inputSmoother;
 
-    private final SlewRateLimiter xLimiter = new SlewRateLimiter(3.0);
-    private final SlewRateLimiter yLimiter = new SlewRateLimiter(3.0);
-    private final SlewRateLimiter rotLimiter = new SlewRateLimiter(6.0);
+    // private final SlewRateLimiter xLimiter = new SlewRateLimiter(3.0);
+    // private final SlewRateLimiter yLimiter = new SlewRateLimiter(3.0);
+    // private final SlewRateLimiter rotLimiter = new SlewRateLimiter(6.0);
 
     private final SwerveRequest.FieldCentricFacingAngle fieldCentricFacingAngleRequest = new SwerveRequest.FieldCentricFacingAngle()
         .withRotationalDeadband(Driving.kPIDRotationDeadband)
