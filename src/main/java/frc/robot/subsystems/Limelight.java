@@ -12,11 +12,15 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Landmark;
 import frc.robot.LimelightHelpers;
+import frc.robot.RobotContainer;
 import frc.robot.LimelightHelpers.PoseEstimate;
+
 
 
 public class Limelight extends SubsystemBase {
@@ -27,6 +31,8 @@ public class Limelight extends SubsystemBase {
     public static double angularStdDevBaseline = 0.07; // Radians
     public static double angularStdDevMegatag2Factor =
       Double.POSITIVE_INFINITY;
+
+    public static double maxError;
 
     public Limelight(String name) {
         this.name = name;
@@ -66,6 +72,7 @@ public class Limelight extends SubsystemBase {
         //     poseEstimate_MegaTag1.pose.getRotation()
         // );
         poseEstimate_MegaTag2.pose = selectedPose;
+        
         //TODO: remind test 
 
 
@@ -104,4 +111,8 @@ public class Limelight extends SubsystemBase {
             this.standardDeviations = standardDeviations;
         }
     }
+
+    
+
+    
 }

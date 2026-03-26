@@ -104,9 +104,9 @@ public record ChoreoTraj(
 	public static final ChoreoTraj LimelightOutpost = new ChoreoTraj(
 	    "LimelightOutpost",
 	    OptionalInt.empty(),
-	    2.13229,
+	    6.09869,
 	    new Pose2d(3.56, 0.696, Rotation2d.fromRadians(0.114)),
-	    new Pose2d(2.619, 0.697, Rotation2d.fromRadians(3.142))
+	    new Pose2d(2.619, 0.697, Rotation2d.fromRadians(-3.142))
 	);
 	public static final ChoreoTraj LimelightOutpostBetter = new ChoreoTraj(
 	    "LimelightOutpostBetter",

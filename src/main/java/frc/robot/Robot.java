@@ -54,7 +54,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
     private final RobotContainer m_robotContainer;
     private Command autonomousCommand;
-    public static Alliance alliance = DriverStation.Alliance.Blue;
+    public static Alliance alliance = DriverStation.Alliance.Red;
 
     public enum AimStates
     {
@@ -79,7 +79,7 @@ public class Robot extends LoggedRobot {
                 // Running on a real robot, log to a USB stick ("/U/logs")
                 Logger.addDataReceiver(new WPILOGWriter());
                 Logger.addDataReceiver(new NT4Publisher());
-                RobotController.setBrownoutVoltage(7.5);
+                RobotController.setBrownoutVoltage(6.1);
                 break;
 
             case SIM:

@@ -15,11 +15,12 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.Driving;
-import frc.robot.Landmark;
 //import frc.robot.Landmarks;
 import frc.robot.subsystems.Swerve;
 import frc.util.DriveInputSmoother;
@@ -124,7 +125,8 @@ public class AimAndDriveCommand extends Command {
         final Translation2d towerPos = Landmark.TOWER.get().getTranslation();
         final Translation2d robotPosition = swerve.getState().Pose.getTranslation();
         final Rotation2d hubDirectionInBlueAlliancePerspective = towerPos.minus(robotPosition).getAngle();
-        final Rotation2d hubDirectionInOperatorPerspective = hubDirectionInBlueAlliancePerspective.rotateBy(swerve.getOperatorForwardDirection());
+        final Rotation2d hubDirectionInOperatorPerspective = 
+            hubDirectionInBlueAlliancePerspective.rotateBy(swerve.getOperatorForwardDirection());
         return hubDirectionInOperatorPerspective;
     }
 
@@ -133,11 +135,12 @@ public class AimAndDriveCommand extends Command {
     {
         return getDirectionToHub();
     }
-
+    public double targetAngle = 0;
     @Override
     public void execute() {
         final ManualDriveInput input = inputSmoother.getSmoothedInput();
         Rotation2d targetDirection = getDirectionToHub();
+        targetAngle = targetDirection.getDegrees();
         swerve.setControl(
             fieldCentricFacingAngleRequest
                 .withVelocityX(Driving.kMaxSpeed.times(input.forward))
@@ -151,4 +154,24 @@ public class AimAndDriveCommand extends Command {
     public boolean isFinished() {
         return false;
     }
+
+
+     @Override
+    public void initSendable(SendableBuilder builder) {
+        // if(!hasRun)
+        // {
+             builder.addDoubleProperty("Hub X get", 
+             () ->Landmark.HUB.get().getTranslation().getX(), (null));
+
+             builder.addDoubleProperty("Hub Y", 
+             () -> Landmark.HUB.get().getTranslation().getY(), (null));
+
+             builder.addDoubleProperty("Hub Y", 
+             () -> targetAngle, (targetAngle) -> getDirectionToHub().getDegrees());
+
+             builder.addBooleanProperty("IsBlue", () -> Robot.alliance == Alliance.Blue, (null));
+        //}
+       
+    }
+
 }

@@ -404,7 +404,10 @@ public class RobotContainer {
     //         return Commands.runOnce(() -> plotter.setLandmarkPose(Landmark.LEFT_CORNER.get()));
     //     }
     // }
-
+    public void seedAgain()
+    {
+        hasSeededPose = true;
+    }
 
     private void configureManualDriveBindings() {
         final ManualDriveCommand manualDriveCommand = new ManualDriveCommand(
@@ -443,7 +446,7 @@ public class RobotContainer {
         // driver.povLeft().onTrue(Commands.runOnce(()-> manualDriveCommand.setLockedHeading(Rotation2d.kCCW_90deg)));
         // driver.povDown().onTrue(Commands.runOnce(() -> manualDriveCommand.setLockedHeading(Rotation2d.kZero)));
 
-         driver.x().onTrue(Commands.runOnce(() -> manualDriveCommand.seedFieldCentric()));
+         driver.x().onTrue(Commands.runOnce(() -> seedAgain()));
         driver.leftTrigger()
             .whileTrue(Commands.runOnce(() -> restrictSpeed())).whileFalse(Commands.runOnce(() -> unrestrictSpeed()));
         driver.rightTrigger()
@@ -543,47 +546,5 @@ public class RobotContainer {
     }
     private final float maxError = 0.1f;
     
-    // private Command slowUpdateVisionCommand() {
-    //     return limelight.run(() -> {
-    //         final Pose2d currentRobotPose = swerve.getState().Pose;
-    //         final Optional<Limelight.Measurement> measurement = limelight.getMeasurement(currentRobotPose);
-    //         //if(button.onTrue(System.out.println(measurement)))
-    //         // measurement.ifPresent(m -> {
-    //         //     swerve.addVisionMeasurement(
-    //         //         m.poseEstimate.pose, 
-    //         //         m.poseEstimate.timestampSeconds,
-    //         //         m.standardDeviations
-    //         //     );
-    //        // System.out.println(measurement);
-    //         measurement.ifPresent(m -> {
-    //             if (!hasSeededPose) {
-    //                 swerve.resetPose(m.poseEstimate.pose);
-    //                 hasSeededPose = true;
-    //               //  System.out.println("SEEDED FIELD POSE");
-    //             }
-    //             //System.out.println(m.poseEstimate.pose);
-                
-    //             // Translation2d distance = lastPose.getTranslation().minus(m.poseEstimate.pose.getTranslation());//- m.poseEstimate.pose.getTranslation().getX();
-    //             // if(Math.abs(distance.getX()) > maxError || Math.abs(distance.getY()) > maxError)
-    //             // {
-    //             SmartDashboard.getNumber("Current Robot Pose Y", swerve.getState().Pose.getY());
-    //             SmartDashboard.getNumber("Current Robot Pose X", swerve.getState().Pose.getX());
-    //                 swerve.addVisionMeasurement(
-    //                     m.poseEstimate.pose, 
-    //                     m.poseEstimate.timestampSeconds,
-    //                     m.standardDeviations
-    //                 );
-    //                 lastPose = m.poseEstimate.pose;
-    //             //}
-    //             // swerve.resetRotation(m.poseEstimate.pose.getRotation());
-    //         });
-                
-    //         // });
-    //        // swerve.resetPose(new Pose2d(Units.inchesToMeters(50), Units.inchesToMeters(50), Rotation2d.fromDegrees(180)));
-    //         // measurement.ifPresent(m -> {
-    //         //     swerve.resetPose(m.poseEstimate.pose);
-    //         // });
-    //     })
-    //     .ignoringDisable(true);
-    // }
+   
 }

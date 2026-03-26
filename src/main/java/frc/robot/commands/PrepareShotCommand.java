@@ -109,14 +109,15 @@ public class PrepareShotCommand extends Command {
 
 
 
-    // @Override
-    // public void initSendable(SendableBuilder builder) {
-    //     if(!hasRun)
-    //     {
-    //          builder.addDoubleProperty("Distance to Hub (inches)", () -> distanceHub, (distanceHub) -> getDistanceToHub());
-    //     }
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        // if(!hasRun)
+        // {
+             builder.addDoubleProperty("Distance to Hub (inches)", () -> distanceHub, (distanceHub) -> getDistanceToHub());
+            
+        //}
        
-    // }
+    }
 
     
     @Override
