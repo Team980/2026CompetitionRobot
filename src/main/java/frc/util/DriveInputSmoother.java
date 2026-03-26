@@ -1,0 +1,45 @@
+package frc.util;
+
+import java.util.function.DoubleSupplier;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.numbers.N2;
+import frc.robot.RobotContainer;
+
+public class DriveInputSmoother {
+    //0.1
+    public static double joystickDeadband = 0.1*RobotContainer.speedFactor;
+    private static final double kCurveExponent = 1.5;
+
+    private final DoubleSupplier forwardInput;
+    private final DoubleSupplier leftInput;
+    private final DoubleSupplier rotationInput;
+
+    public DriveInputSmoother(DoubleSupplier forwardInput, DoubleSupplier leftInput, DoubleSupplier rotationInput) {
+        this.forwardInput = forwardInput;
+        this.leftInput = leftInput;
+        this.rotationInput = rotationInput;
+    }
+
+    public DriveInputSmoother(DoubleSupplier forwardInput, DoubleSupplier leftInput) {
+        this(forwardInput, leftInput, () -> 0);
+    }
+
+    public ManualDriveInput getSmoothedInput() { 
+        final Vector<N2> rawTranslationInput = VecBuilder.fill(forwardInput.getAsDouble(), leftInput.getAsDouble());
+        final Vector<N2> deadbandedTranslationInput = MathUtil.applyDeadband(rawTranslationInput, joystickDeadband);
+        final Vector<N2> curvedTranslationInput = MathUtil.copyDirectionPow(deadbandedTranslationInput, kCurveExponent);
+
+        final double rawRotationInput = rotationInput.getAsDouble();
+        final double deadbandedRotationInput = MathUtil.applyDeadband(rawRotationInput, joystickDeadband);
+        final double curvedRotationInput = MathUtil.copyDirectionPow(deadbandedRotationInput, kCurveExponent);
+
+        return new ManualDriveInput(
+            curvedTranslationInput.get(0), 
+            curvedTranslationInput.get(1), 
+            curvedRotationInput
+        );
+    }
+}
