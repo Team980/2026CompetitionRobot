@@ -13,6 +13,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -20,6 +21,7 @@ import frc.robot.Landmark;
 import frc.robot.LimelightHelpers;
 import frc.robot.RobotContainer;
 import frc.robot.LimelightHelpers.PoseEstimate;
+import frc.robot.Robot;
 
 
 
@@ -65,7 +67,8 @@ public class Limelight extends SubsystemBase {
         double error1 = pose1.getTranslation().getDistance(currentRobotPose.getTranslation());
         double error2 = pose2.getTranslation().getDistance(currentRobotPose.getTranslation());
 
-        Pose2d selectedPose = error1 < error2 ? pose1 : pose2;
+        Pose2d selectedPose = // error1 < error2 ? pose1 : pose2;
+            pose1;
 
         // poseEstimate_MegaTag2.pose = new Pose2d(
         //     poseEstimate_MegaTag2.pose.getTranslation(),
@@ -111,6 +114,20 @@ public class Limelight extends SubsystemBase {
             this.standardDeviations = standardDeviations;
         }
     }
+
+      @Override
+    public void initSendable(SendableBuilder builder) {
+        // if(!hasRun)
+        // {
+             builder.addDoubleProperty("Hub X get", 
+             () ->Landmark.HUB.get().getTranslation().getX(), (null));
+
+             builder.addDoubleProperty("Hub Y", 
+             () -> Landmark.HUB.get().getTranslation().getY(), (null));
+        //}
+       
+    }
+
 
     
 

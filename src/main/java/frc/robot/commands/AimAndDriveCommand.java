@@ -121,14 +121,14 @@ public class AimAndDriveCommand extends Command {
     // }
 
 
-    private Rotation2d getDirectionToTower() {
-        final Translation2d towerPos = Landmark.TOWER.get().getTranslation();
-        final Translation2d robotPosition = swerve.getState().Pose.getTranslation();
-        final Rotation2d hubDirectionInBlueAlliancePerspective = towerPos.minus(robotPosition).getAngle();
-        final Rotation2d hubDirectionInOperatorPerspective = 
-            hubDirectionInBlueAlliancePerspective.rotateBy(swerve.getOperatorForwardDirection());
-        return hubDirectionInOperatorPerspective;
-    }
+    // private Rotation2d getDirectionToTower() {
+    //     final Translation2d towerPos = Landmark.TOWER.get().getTranslation();
+    //     final Translation2d robotPosition = swerve.getState().Pose.getTranslation();
+    //     final Rotation2d hubDirectionInBlueAlliancePerspective = towerPos.minus(robotPosition).getAngle();
+    //     final Rotation2d hubDirectionInOperatorPerspective = 
+    //         hubDirectionInBlueAlliancePerspective.rotateBy(swerve.getOperatorForwardDirection());
+    //     return hubDirectionInOperatorPerspective;
+    // }
 
 
     public Rotation2d getTargetAngle()
@@ -155,23 +155,6 @@ public class AimAndDriveCommand extends Command {
         return false;
     }
 
-
-     @Override
-    public void initSendable(SendableBuilder builder) {
-        // if(!hasRun)
-        // {
-             builder.addDoubleProperty("Hub X get", 
-             () ->Landmark.HUB.get().getTranslation().getX(), (null));
-
-             builder.addDoubleProperty("Hub Y", 
-             () -> Landmark.HUB.get().getTranslation().getY(), (null));
-
-             builder.addDoubleProperty("Hub Y", 
-             () -> targetAngle, (targetAngle) -> getDirectionToHub().getDegrees());
-
-             builder.addBooleanProperty("IsBlue", () -> Robot.alliance == Alliance.Blue, (null));
-        //}
-       
-    }
+ 
 
 }

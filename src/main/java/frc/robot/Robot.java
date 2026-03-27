@@ -112,6 +112,7 @@ public class Robot extends LoggedRobot {
         // {
             // System.out.println("Robot Enabled");
             // RobotContainer.hasEnabled = true;
+            
             RobotContainer.hasSeededPose = false;
        // }
     
@@ -184,11 +185,11 @@ public class Robot extends LoggedRobot {
             m_robotContainer.driver.a().whileTrue(m_robotContainer.subsystemCommands.testAimLeftCorner());
             hasAimedOnce = false;
         }
-        else if((aimStates == AimStates.HUBAIM || !RobotContainer.isInCenter) && !hasAimedOnce)
-        {
-            m_robotContainer.driver.rightBumper().whileTrue(m_robotContainer.subsystemCommands.testAim());
-            hasAimedOnce = true;
-        }
+        // else if((aimStates == AimStates.HUBAIM || !RobotContainer.isInCenter) && !hasAimedOnce)
+        // {
+        //     m_robotContainer.driver.rightBumper().whileTrue(m_robotContainer.subsystemCommands.testAim());
+        //     hasAimedOnce = true;
+        // }
         
 
     //   //  System.out.println(m_robotContainer.driver.y().getAsBoolean());

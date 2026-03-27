@@ -113,7 +113,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
     private final Module[] modules = new Module[4];
     private final GyroIO gyroIO;
     private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
-    private Rotation2d rawGyroRotation = new Rotation2d();
+   // private Rotation2d rawGyroRotation = new Rotation2d();
     private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
 
     private SwerveModulePosition[] lastModulePositions = // For delta tracking
@@ -313,14 +313,14 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
             }
 
         // Update gyro angle
-            if (gyroInputs.connected) {
-                // Use the real gyro angle
-                rawGyroRotation = gyroInputs.odometryYawPositions[i];
-            } else {
-                // Use the angle delta from the kinematics and module deltas
-                rawGyroRotation =
-                    rawGyroRotation.plus(new Rotation2d(kinematics.toTwist2d(moduleDeltas).dtheta));
-            }
+            // if (gyroInputs.connected) {
+            //     // Use the real gyro angle
+            //     rawGyroRotation = gyroInputs.odometryYawPositions[i];
+            // } else {
+            //     // Use the angle delta from the kinematics and module deltas
+            //     rawGyroRotation =
+            //         rawGyroRotation.plus(new Rotation2d(kinematics.toTwist2d(moduleDeltas).dtheta));
+            // }
             // this.simulationPeriodic();
             // this.updateSimState(sampleTimestamps[i], RobotController.getBatteryVoltage());
         

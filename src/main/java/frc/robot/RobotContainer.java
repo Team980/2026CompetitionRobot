@@ -404,6 +404,7 @@ public class RobotContainer {
     //         return Commands.runOnce(() -> plotter.setLandmarkPose(Landmark.LEFT_CORNER.get()));
     //     }
     // }
+    
     public void seedAgain()
     {
         hasSeededPose = true;
@@ -481,7 +482,7 @@ public class RobotContainer {
    // public static int count = 0;
    // int waitCounts = 100;
     private Command updateVisionCommand() {
-       
+        
         return limelight.run(() -> {
             final Pose2d currentRobotPose = swerve.getState().Pose;
             final Optional<Limelight.Measurement> measurement = limelight.getMeasurement(currentRobotPose);
@@ -496,19 +497,26 @@ public class RobotContainer {
            
             measurement.ifPresent(m -> {
                 
-                if (!hasSeededPose && InBoundsCheck(m.poseEstimate.pose)){ //&& InBoundsCheck(m.poseEstimate.pose)) {
+                // if (!hasSeededPose && InBoundsCheck(m.poseEstimate.pose)){ //&& InBoundsCheck(m.poseEstimate.pose)) {
                 // if (count < waitCounts) {
+                if(DriverStation.isDisabled())
+                {
                     //TODO: Check if this also works for the red side
+                   
                     swerve.resetPose(m.poseEstimate.pose);
                     if (Robot.alliance == Alliance.Red) {
-                        swerve.resetRotation(Rotation2d.fromDegrees(180));
+                         swerve.seedFieldCentric(Rotation2d.fromDegrees(180));
+                        //swerve.resetRotation(Rotation2d.fromDegrees(180));
                     } else {
-                        swerve.resetRotation(Rotation2d.fromDegrees(0));
+                         swerve.seedFieldCentric(Rotation2d.fromDegrees(0));
+                        //swerve.resetRotation(Rotation2d.fromDegrees(0));
                     }
+                  //  swerve.getPigeon2().setYaw(m.poseEstimate.pose.getRotation().getDegrees());
+                  //  swerve.getPigeon2().set
                  //  swerve.seedFieldCentric(m.poseEstimate.pose.getRotation());
                     hasSeededPose = true;
                   //  System.out.println("SEEDED FIELD POSE");
-            }
+                 }
 
                double distance = m.poseEstimate.pose.getTranslation().getDistance(swerve.getState().Pose.getTranslation());
 

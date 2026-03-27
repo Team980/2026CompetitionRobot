@@ -25,7 +25,7 @@ import frc.robot.Ports;
 
 public class Feeder extends SubsystemBase {
     public enum Speed {
-        FEED(5000/10);//TODO: undivide by 4
+        FEED(2000 );//was 500
 
         private final double rpm;
 
