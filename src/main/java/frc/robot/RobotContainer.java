@@ -346,7 +346,7 @@ public class RobotContainer {
           operator.povUp()
             .onTrue(stopCommand);
 
-        Command speedCommand = floor.runOnce(() -> floor.set(Speed.FEED));
+        Command speedCommand = floor.runOnce(() -> floor.set(Speed.FEED.rpm()));
         driver.povDown().onTrue(hanger.hangarDownCommand());
         //operator.leftTrigger().whileTrue(floor.feedCommand());
 
@@ -453,7 +453,9 @@ public class RobotContainer {
         driver.rightTrigger()
             .whileTrue(Commands.runOnce(() -> restrictRotation())).whileFalse(Commands.runOnce(() -> unrestrictRotation()));
         operator.rightTrigger().whileTrue(subsystemCommands.preShootCommand());
-        operator.rightBumper().whileTrue(subsystemCommands.feedShootCommand());
+        Command parallel = new ParallelCommandGroup(feeder.feedCommand(), floor.feedCommand());
+        Command parallelStop = new ParallelCommandGroup(feeder.stopFeed(), floor.stopFloor());
+        operator.rightBumper().whileTrue(parallel).whileFalse(parallelStop);
         if(Robot.alliance != null)
             driver.rightBumper().whileTrue(subsystemCommands.testAim());
         operator.leftBumper().whileTrue(intake.intakeCommand()).whileFalse(intake.stopRollers());
@@ -502,21 +504,22 @@ public class RobotContainer {
                 if(DriverStation.isDisabled())
                 {
                     //TODO: Check if this also works for the red side
-                   
-                    swerve.resetPose(m.poseEstimate.pose);
-                    if (Robot.alliance == Alliance.Red) {
-                         swerve.seedFieldCentric(Rotation2d.fromDegrees(180));
-                        //swerve.resetRotation(Rotation2d.fromDegrees(180));
-                    } else {
-                         swerve.seedFieldCentric(Rotation2d.fromDegrees(0));
-                        //swerve.resetRotation(Rotation2d.fromDegrees(0));
-                    }
+                    Rotation2d rotation = (Robot.alliance == Alliance.Red) ? new Rotation2d(180) : new Rotation2d(0);
+                    Pose2d driverPose = new Pose2d(m.poseEstimate.pose.getTranslation(), rotation);
+                    swerve.resetPose(driverPose);
+                    // if (Robot.alliance == Alliance.Red) {
+                    //      swerve.seedFieldCentric(Rotation2d.fromDegrees(180));
+                    //     //swerve.resetRotation(Rotation2d.fromDegrees(180));
+                    // } else {
+                    //      swerve.seedFieldCentric(Rotation2d.fromDegrees(0));
+                    //     //swerve.resetRotation(Rotation2d.fromDegrees(0));
+                    // }
                   //  swerve.getPigeon2().setYaw(m.poseEstimate.pose.getRotation().getDegrees());
                   //  swerve.getPigeon2().set
-                 //  swerve.seedFieldCentric(m.poseEstimate.pose.getRotation());
+                    swerve.seedFieldCentric(m.poseEstimate.pose.getRotation());
                     hasSeededPose = true;
                   //  System.out.println("SEEDED FIELD POSE");
-                 }
+                }
 
                double distance = m.poseEstimate.pose.getTranslation().getDistance(swerve.getState().Pose.getTranslation());
 

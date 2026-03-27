@@ -19,13 +19,15 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.KrakenX60;
 import frc.robot.Ports;
 
 public class Feeder extends SubsystemBase {
     public enum Speed {
-        FEED(2000 );//was 500
+        FEED(500),//was 500
+        STOP(0);
 
         private final double rpm;
 
@@ -36,11 +38,17 @@ public class Feeder extends SubsystemBase {
         public AngularVelocity angularVelocity() {
             return RPM.of(rpm);
         }
+
+        public double percent()
+        {
+            return rpm;
+        }
     }
 
     private final TalonFX motor;
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
     private final VoltageOut voltageRequest = new VoltageOut(0);
+    private static final AngularVelocity kVelocityTolerance = RPM.of(100);
 
     public Feeder() {
         motor = new TalonFX(Ports.kFeeder, Ports.kRoboRioCANBus);
@@ -53,18 +61,19 @@ public class Feeder extends SubsystemBase {
             )
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(Amps.of(80))
+                    .withStatorCurrentLimit(Amps.of(90))
                     .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(Amps.of(50))
+                    .withSupplyCurrentLimit(Amps.of(60))
                     //50
                     .withSupplyCurrentLimitEnable(true)
             )
             .withSlot0(
                 new Slot0Configs()
-                    .withKP(1)
+                    .withKP(0.5)
                     .withKI(0)
                     .withKD(0)
-                    .withKV(12.0 / KrakenX60.kFreeSpeed.in(RotationsPerSecond)) // 12 volts when requesting max RPS
+                    .withKS(0.25) //was nonthing below 0.10345, 0.11
+                    .withKV(0.105) // 12 volts when requesting max RPS
             );
         
         motor.getConfigurator().apply(config);
@@ -87,6 +96,26 @@ public class Feeder extends SubsystemBase {
 
     public Command feedCommand() {
         return startEnd(() -> setPercentOutput(0.5), () -> setPercentOutput(0));
+    }
+    // public Command feedCommand() {
+    //     return runOnce(() -> set(Speed.FEED));
+    // }
+
+    // public Command feedCommand() {
+    //     return runOnce(() -> set(Speed.FEED))
+    //         .andThen(Commands.waitUntil(this::isVelocityWithinTolerance));
+    // }
+
+    public Command stopFeed()
+    {
+        return runOnce(() -> setPercentOutput(Speed.STOP.percent()));
+    }
+
+    public boolean isVelocityWithinTolerance() {
+        if (!(motor.getAppliedControl() instanceof VelocityVoltage)) return false;
+        final AngularVelocity currentVelocity = motor.getVelocity().getValue();
+        final AngularVelocity targetVelocity = velocityRequest.getVelocityMeasure();
+        return currentVelocity.isNear(targetVelocity, kVelocityTolerance);
     }
 
     @Override

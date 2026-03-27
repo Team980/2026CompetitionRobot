@@ -67,17 +67,18 @@ public class Shooter extends SubsystemBase {
             )
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(Amps.of(120))
+                    .withStatorCurrentLimit(Amps.of(110))
                     .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(Amps.of(70))
+                    .withSupplyCurrentLimit(Amps.of(90))
                     .withSupplyCurrentLimitEnable(true)
             )
             .withSlot0(
                 new Slot0Configs()
-                    .withKP(0.75) // was 0.5 moving to 0.75
-                    .withKI(2)
+                    .withKP(0.50) // was 0.5 moving to 0.75
+                    .withKI(0)
                     .withKD(0)
-                    .withKV(12.0 / KrakenX60.kFreeSpeed.in(RotationsPerSecond)) // 12 volts when requesting max RPS
+                    .withKS(0.2)//was 0?
+                    .withKV(0.11) // 12 volts when requesting max RPS//was 12/Krakenx60maxSpeed
             );
         
         motor.getConfigurator().apply(config);
