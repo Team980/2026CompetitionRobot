@@ -47,9 +47,9 @@ public class PrepareShotCommand extends Command {
     public static boolean hasRun = false;
 
     static {
-        distanceToShotMap.put(Inches.of(52.0), new Shot(2800 + 350, 0.19));
-        distanceToShotMap.put(Inches.of(114.4), new Shot(3275 + 550, 0.40));
-        distanceToShotMap.put(Inches.of(165.5), new Shot(3650 + 625, 0.48));
+        distanceToShotMap.put(Inches.of(52.0), new Shot(2800 + 300, 0.19));
+        distanceToShotMap.put(Inches.of(114.4), new Shot(3275 + 340, 0.40));
+        distanceToShotMap.put(Inches.of(165.5), new Shot(3650 + 425, 0.48));
     }
 
 
@@ -134,7 +134,7 @@ public class PrepareShotCommand extends Command {
         public final double shooterRPM;
         public final double hoodPosition;
 
-        public Shot(double shooterRPM, double hoodPosition) {
+        public Shot(double shooterRPM,  double hoodPosition) {
             this.shooterRPM = shooterRPM;
             this.hoodPosition = hoodPosition;
         }

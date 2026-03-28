@@ -5,19 +5,19 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "LimelightOutpost"
-          }
-        },
-        {
           "type": "deadline",
           "data": {
             "commands": [
               {
+                "type": "path",
+                "data": {
+                  "pathName": "LimelightOutpost"
+                }
+              },
+              {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.5
+                  "waitTime": 1.0
                 }
               },
               {
@@ -34,12 +34,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Outpost"
           }
         },
         {

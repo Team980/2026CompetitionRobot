@@ -188,12 +188,12 @@ public class RobotContainer {
     public RobotContainer() {
         configureBindings();
         autoRoutines.configure();
-       // boolean isCompetition = true;
+        boolean isCompetition = true;
         registerNamedCommands();
-        autoChooser = AutoBuilder.buildAutoChooser();
-        // autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
-        // (stream) -> isCompetition
-        // ? stream.filter(auto -> auto.getName().startsWith("")) : stream);
+      //  autoChooser = AutoBuilder.buildAutoChooser();
+        autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
+        (stream) -> isCompetition
+        ? stream.filter(auto -> auto.getName().startsWith("Comp")) : stream);
         SmartDashboard.putData("AutoChooser", autoChooser);
         swerve.resetPose(Pose2d.kZero);
         lastPose = swerve.getState().Pose;

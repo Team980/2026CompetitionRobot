@@ -26,7 +26,7 @@ import frc.robot.Ports;
 public class Floor extends SubsystemBase {
     public enum Speed {
         STOP(0),
-        FEED(0.21),
+        FEED(0.5),
         FEEDSPEED(1200);
 
         private final double percentOutput;
@@ -96,7 +96,7 @@ public class Floor extends SubsystemBase {
     // }
 
     public Command feedCommand() {
-        return runOnce(() -> set(Speed.FEEDSPEED.rpm()));
+        return runOnce(() -> set(Speed.FEEDSPEED));
     }
 
     // public Command feedCommand() {

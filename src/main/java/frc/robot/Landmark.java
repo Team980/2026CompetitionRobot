@@ -33,8 +33,9 @@ public enum Landmark {
     LEFT_START(new Pose2d(Inches.of(158.34 - Constants.RobotDimensions.BUMPER_WIDTH.in(Inches)*0.5), Inches.of(292.815), Rotation2d.fromDegrees(0))),
     MIDDLE_START(new Pose2d(Inches.of(158.34 - Constants.RobotDimensions.BUMPER_WIDTH.in(Inches)*0.5), Inches.of(158.845), Rotation2d.fromDegrees(0))),
 
-    LEFT_CORNER(new Pose2d(Inches.of(0), Constants.FieldConstants.FIELD_HEIGHT , Rotation2d.fromDegrees(0))),
-    RIGHT_CORNER(new Pose2d(Inches.of(0), Inches.of(0), Rotation2d.fromDegrees(0)));
+    //Subtracting so we don't am directly at
+    LEFT_CORNER(new Pose2d(Inches.of(0), Constants.FieldConstants.FIELD_HEIGHT.minus(Inches.of(12)), Rotation2d.fromDegrees(0))),
+    RIGHT_CORNER(new Pose2d(Inches.of(0), Inches.of(0).plus(Inches.of(12)), Rotation2d.fromDegrees(0)));
 
     private Pose2d bluePose;
     private Pose2d redPose;

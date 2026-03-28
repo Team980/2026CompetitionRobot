@@ -26,8 +26,9 @@ import frc.robot.Ports;
 
 public class Feeder extends SubsystemBase {
     public enum Speed {
-        FEED(500),//was 500
-        STOP(0);
+        FEED(1600),//was 500
+        STOP(0),
+        FEEDP(1.0);
 
         private final double rpm;
 
@@ -69,11 +70,11 @@ public class Feeder extends SubsystemBase {
             )
             .withSlot0(
                 new Slot0Configs()
-                    .withKP(0.5)
+                    .withKP(0.4)
                     .withKI(0)
                     .withKD(0)
                     .withKS(0.25) //was nonthing below 0.10345, 0.11
-                    .withKV(0.105) // 12 volts when requesting max RPS
+                    .withKV(0.12) // 12 volts when requesting max RPS
             );
         
         motor.getConfigurator().apply(config);
@@ -94,12 +95,12 @@ public class Feeder extends SubsystemBase {
         );
     }
 
-    public Command feedCommand() {
-        return startEnd(() -> setPercentOutput(0.5), () -> setPercentOutput(0));
-    }
     // public Command feedCommand() {
-    //     return runOnce(() -> set(Speed.FEED));
+    //     return startEnd(() -> setPercentOutput(Speed.FEEDP.percent()), () -> setPercentOutput(0));
     // }
+    public Command feedCommand() {
+        return runOnce(() -> set(Speed.FEED));
+    }
 
     // public Command feedCommand() {
     //     return runOnce(() -> set(Speed.FEED))

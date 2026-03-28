@@ -18,6 +18,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,6 +35,7 @@ public class Shooter extends SubsystemBase {
     public final List<TalonFX> motors;
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
     private final VoltageOut voltageRequest = new VoltageOut(0);
+    private final BangBangController controller = new BangBangController();
 
     private double dashboardTargetRPM = 3000;// was 0.0 //3000
     //3000 only shot 1-2 feet in the air not high enough for hub
@@ -67,21 +69,22 @@ public class Shooter extends SubsystemBase {
             )
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(Amps.of(110))
+                    .withStatorCurrentLimit(Amps.of(120))
                     .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(Amps.of(90))
+                    .withSupplyCurrentLimit(Amps.of(100))
                     .withSupplyCurrentLimitEnable(true)
             )
             .withSlot0(
-                new Slot0Configs()
-                    .withKP(0.50) // was 0.5 moving to 0.75
+                new Slot0Configs() //0.5
+                    .withKP(0.8) // was 0.5 moving to 0.75
                     .withKI(0)
                     .withKD(0)
-                    .withKS(0.2)//was 0?
-                    .withKV(0.11) // 12 volts when requesting max RPS//was 12/Krakenx60maxSpeed
+                    .withKS(0.21)//was 0? //was 0.11
+                    .withKV(0.14) // 12 volts when requesting max RPS//was 12/Krakenx60maxSpeed
             );
         
         motor.getConfigurator().apply(config);
+       
     }
 
     // public void setRPM(double rpm) {
@@ -98,6 +101,8 @@ public class Shooter extends SubsystemBase {
                 velocityRequest
                     .withVelocity(RPM.of(rpm))
             );
+            //  motor.setVoltage(controller.calculate(motor.getVelocity().getValueAsDouble(),
+            //     rpm) *12 + 0.9 * motor.getClosedLoopFeedForward().getValueAsDouble());
         }
     }
 
