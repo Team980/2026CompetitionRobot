@@ -67,7 +67,7 @@ public class Limelight extends SubsystemBase {
         double error1 = pose1.getTranslation().getDistance(currentRobotPose.getTranslation());
         double error2 = pose2.getTranslation().getDistance(currentRobotPose.getTranslation());
 
-        Pose2d selectedPose = // error1 < error2 ? pose1 : pose2;
+        Pose2d selectedPose =  //error1 < error2 ? pose1 : pose2;
             pose1;
 
         // poseEstimate_MegaTag2.pose = new Pose2d(

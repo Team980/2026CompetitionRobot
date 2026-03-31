@@ -100,6 +100,10 @@ public class Robot extends LoggedRobot {
 
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
+
+        Optional<Alliance> allianceOptional = DriverStation.getAlliance();
+        alliance = allianceOptional.isPresent() ? allianceOptional.get() : alliance;
+
         m_robotContainer = new RobotContainer();
         SmartDashboard.putData(CommandScheduler.getInstance());
         RobotController.setBrownoutVoltage(Volts.of(6.1));
@@ -139,12 +143,13 @@ public class Robot extends LoggedRobot {
       // System.out.println( m_robotContainer.intake.pivotMotor.getPosition().getValueAsDouble());
       // System.out.println(m_robotContainer.intake.pivotMotor.rotation);
      
-        // Optional<Alliance> allianceOptional = DriverStation.getAlliance();
+        Optional<Alliance> allianceOptional = DriverStation.getAlliance();
         
         CommandScheduler.getInstance().run();
         // if (allianceOptional.isPresent()) {
         //     alliance = allianceOptional.get();
         // } 
+        alliance = allianceOptional.isPresent() ? allianceOptional.get() : alliance;
         // return to default priority for non-robot code
         Threads.setCurrentThreadPriority(false, 10);
         Logger.recordOutput("Zeroed exterior poses", new Pose3d [] {new Pose3d()});

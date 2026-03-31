@@ -15,23 +15,16 @@
                 }
               },
               {
-                "type": "sequential",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "DeployIntake"
-                      }
-                    }
-                  ]
+                  "name": "DeployIntake"
                 }
               }
             ]
           }
         },
         {
-          "type": "deadline",
+          "type": "parallel",
           "data": {
             "commands": [
               {
@@ -50,6 +43,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "StopIntake"
+          }
+        },
+        {
           "type": "deadline",
           "data": {
             "commands": [
@@ -57,6 +56,12 @@
                 "type": "path",
                 "data": {
                   "pathName": "DepotIntaking"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "StartIntake"
                 }
               }
             ]
@@ -77,6 +82,12 @@
                 "data": {
                   "pathName": "DepotTurn"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "PreShoot"
+                }
               }
             ]
           }
@@ -96,6 +107,12 @@
                 "data": {
                   "name": "AimToHub"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "PreShoot"
+                }
               }
             ]
           }
@@ -107,7 +124,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 8.0
+                  "waitTime": 6.0
                 }
               },
               {
@@ -123,7 +140,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 3.5
+                        "waitTime": 0.5
                       }
                     },
                     {
@@ -155,24 +172,6 @@
           "type": "named",
           "data": {
             "name": "StopShooter"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "DepotToTower"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Tower"
           }
         }
       ]

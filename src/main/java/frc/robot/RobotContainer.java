@@ -507,6 +507,7 @@ public class RobotContainer {
                     Rotation2d rotation = (Robot.alliance == Alliance.Red) ? new Rotation2d(180) : new Rotation2d(0);
                     Pose2d driverPose = new Pose2d(m.poseEstimate.pose.getTranslation(), rotation);
                     swerve.resetPose(driverPose);
+                    // swerve.resetPose(m.poseEstimate.pose);
                     // if (Robot.alliance == Alliance.Red) {
                     //      swerve.seedFieldCentric(Rotation2d.fromDegrees(180));
                     //     //swerve.resetRotation(Rotation2d.fromDegrees(180));
@@ -514,9 +515,9 @@ public class RobotContainer {
                     //      swerve.seedFieldCentric(Rotation2d.fromDegrees(0));
                     //     //swerve.resetRotation(Rotation2d.fromDegrees(0));
                     // }
-                  //  swerve.getPigeon2().setYaw(m.poseEstimate.pose.getRotation().getDegrees());
-                  //  swerve.getPigeon2().set
-                    swerve.seedFieldCentric(m.poseEstimate.pose.getRotation());
+
+                  
+                   swerve.seedFieldCentric(m.poseEstimate.pose.getRotation());
                     hasSeededPose = true;
                   //  System.out.println("SEEDED FIELD POSE");
                 }

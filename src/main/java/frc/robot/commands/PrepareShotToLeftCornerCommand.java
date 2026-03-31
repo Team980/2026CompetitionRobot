@@ -41,8 +41,8 @@ public class PrepareShotToLeftCornerCommand extends Command {
     );
 
     static {
-       distanceToShotMap.put(Inches.of(Landmark.RIGHT_BUMP.get().getX() + 0.0), new Shot(3275 + 300, 0.65));
-        distanceToShotMap.put(Constants.FieldConstants.FIELD_WIDTH.div(2), new Shot(3650 + 250, 0.75));
+       distanceToShotMap.put(Inches.of(Landmark.RIGHT_BUMP.get().getX() + 0.0), new Shot(3275 + 275, 0.65));
+        distanceToShotMap.put(Constants.FieldConstants.FIELD_WIDTH.div(2), new Shot(3650 + 300, 0.75));
     }
 
     private final Shooter shooter;

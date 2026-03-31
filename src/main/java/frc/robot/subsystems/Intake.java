@@ -65,7 +65,7 @@ public class Intake extends SubsystemBase {
         // INTAKE(-4),
         AGITATE(-53), //-10
         ReadyToIntake(-108), // -110 if want (PREVIOUSY)
-        Start(- 3);//can be zero if wants
+        Start(-3);//can be zero if wants
 
 
         private final double degrees;
@@ -159,13 +159,13 @@ public class Intake extends SubsystemBase {
                     .withSensorToMechanismRatio(kPivotReduction)
             )
             .withMotionMagic(
-                new MotionMagicConfigs()
-                    .withMotionMagicCruiseVelocity(kMaxPivotSpeed.div(4).times(3))//TODO: move back up
-                    .withMotionMagicAcceleration(kMaxPivotSpeed.per(Second).div(4).times(3))
+                new MotionMagicConfigs()//.div(4).times(3)
+                    .withMotionMagicCruiseVelocity(kMaxPivotSpeed)//TODO: move back up
+                    .withMotionMagicAcceleration(kMaxPivotSpeed.per(Second))
             )
             .withSlot0(
                 new Slot0Configs()
-                    .withKP(300)
+                    .withKP(250) //300
                     .withKI(0)
                     .withKD(0)
                     .withKV(12.0 / kMaxPivotSpeed.in(RotationsPerSecond)) // 12 volts when requesting max RPS

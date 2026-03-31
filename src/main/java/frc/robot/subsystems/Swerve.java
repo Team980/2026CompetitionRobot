@@ -164,7 +164,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem
             new PIDConstants(5.0, 0.0, 0.0)*/
             ), // Rotation PID constants
             PP_CONFIG, // The robot configuration 
-            () -> { // Boolean supplier that controls when the path will be mirrored for the red alliance // This will flip the path being followed to the red side of the field. // THE ORIGIN WILL REMAIN ON THE BLUE SIDE 
+            () -> { // Boolean supplier  that controls when the path will be mirrored for the red alliance // This will flip the path being followed to the red side of the field. // THE ORIGIN WILL REMAIN ON THE BLUE SIDE 
                 return Robot.alliance== Alliance.Red;
             },
             this);
