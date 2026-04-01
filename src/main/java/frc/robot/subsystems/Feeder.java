@@ -26,7 +26,7 @@ import frc.robot.Ports;
 
 public class Feeder extends SubsystemBase {
     public enum Speed {
-        FEED(1600),//was 500
+        FEED(1650),//was 500
         STOP(0),
         FEEDP(1.0);
 
@@ -62,7 +62,7 @@ public class Feeder extends SubsystemBase {
             )
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(Amps.of(90))
+                    .withStatorCurrentLimit(Amps.of(110))
                     .withStatorCurrentLimitEnable(true)
                     .withSupplyCurrentLimit(Amps.of(60))
                     //50
@@ -70,9 +70,9 @@ public class Feeder extends SubsystemBase {
             )
             .withSlot0(
                 new Slot0Configs()
-                    .withKP(0.4)
+                    .withKP(0.4) //0.4
                     .withKI(0)
-                    .withKD(0)
+                    .withKD(0.00)
                     .withKS(0.25) //was nonthing below 0.10345, 0.11
                     .withKV(0.12) // 12 volts when requesting max RPS
             );

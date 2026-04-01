@@ -287,6 +287,7 @@ public class RobotContainer {
             (intake.ReturnIn())
         );
 
+       
         NamedCommands.registerCommand("StopIntake", 
             (intake.stopRollers())
         );
@@ -297,6 +298,8 @@ public class RobotContainer {
         final PrepareShotCommand prepareShotCommand = new PrepareShotCommand(shooter, hood, () -> swerve.getState().Pose);
         NamedCommands.registerCommand("PreShoot", prepareShotCommand);
         NamedCommands.registerCommand("Shoot", parallelFeed);
+         Command parallelStop = new ParallelCommandGroup(feeder.stopFeed(), floor.stopFloor());
+        NamedCommands.registerCommand("StopFeeds", parallelStop);
         NamedCommands.registerCommand("StopShooter", shooter.stopShootCommand());
         NamedCommands.registerCommand("ClimberUp", hanger.hangarUpCommand());
     }

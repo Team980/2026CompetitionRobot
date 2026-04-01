@@ -75,10 +75,10 @@ public class Shooter extends SubsystemBase {
                     .withSupplyCurrentLimitEnable(true)
             )
             .withSlot0(
-                new Slot0Configs() //0.5
-                    .withKP(0.8) // was 0.5 moving to 0.75
+                new Slot0Configs() //0.5 //0.8
+                    .withKP(0.65) // was 0.5 moving to 0.75
                     .withKI(0)
-                    .withKD(0)
+                    .withKD(0.00)
                     .withKS(0.21)//was 0? //was 0.11
                     .withKV(0.14) // 12 volts when requesting max RPS//was 12/Krakenx60maxSpeed
             );

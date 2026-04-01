@@ -43,7 +43,7 @@ public class TunerConstants {
     //     .withKS(0).withKV(0.124);
     //50
     private static final Slot0Configs steerGains = new Slot0Configs()
-        .withKP(40).withKI(0).withKD(0.5) //best 50, 0.5
+        .withKP(50).withKI(0).withKD(0.5) //best 50, 0.5 ratttling mfr
         .withKS(0.0042258).withKV(12.0 / (KrakenX44.kFreeSpeed.in(RotationsPerSecond)/kSteerGearRatio)).withKA(0);
     
     private static final Slot0Configs driveGains = new Slot0Configs()
