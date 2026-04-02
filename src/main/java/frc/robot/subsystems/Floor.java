@@ -27,7 +27,7 @@ public class Floor extends SubsystemBase {
     public enum Speed {
         STOP(0),
         FEED(0.5),
-        FEEDSPEED(1200);
+        FEEDSPEED(300);//1200 //1000
 
         private final double percentOutput;
 

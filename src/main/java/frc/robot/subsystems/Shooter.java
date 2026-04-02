@@ -76,11 +76,12 @@ public class Shooter extends SubsystemBase {
             )
             .withSlot0(
                 new Slot0Configs() //0.5 //0.8
-                    .withKP(0.65) // was 0.5 moving to 0.75
+                    .withKP(0.68) // was 0.5 moving to 0.75
                     .withKI(0)
                     .withKD(0.00)
                     .withKS(0.21)//was 0? //was 0.11
-                    .withKV(0.14) // 12 volts when requesting max RPS//was 12/Krakenx60maxSpeed
+                    .withKV(0.145) // 12 volts when requesting max RPS//was 12/Krakenx60maxSpeed
+                    //0.14
             );
         
         motor.getConfigurator().apply(config);
