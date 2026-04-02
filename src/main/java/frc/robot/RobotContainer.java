@@ -296,6 +296,8 @@ public class RobotContainer {
 
         Command parallelFeed = new ParallelCommandGroup(feeder.feedCommand(), floor.feedCommand());
         final PrepareShotCommand prepareShotCommand = new PrepareShotCommand(shooter, hood, () -> swerve.getState().Pose);
+
+        
         NamedCommands.registerCommand("PreShoot", prepareShotCommand);
         NamedCommands.registerCommand("Shoot", parallelFeed);
          Command parallelStop = new ParallelCommandGroup(feeder.stopFeed(), floor.stopFloor());
